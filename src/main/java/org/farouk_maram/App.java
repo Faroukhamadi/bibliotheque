@@ -32,6 +32,15 @@ public class App extends Application {
         stage.setScene(scene);
     }
 
+    void changeScences2() {
+        Register register = new Register(stage);
+        Scene scene = register.getScene();
+
+        stage.setTitle("Register");
+
+        stage.setScene(scene);
+    }
+
     void changeScences() {
         Login login = new Login(stage);
         System.out.println("Stage in changeScences: " + stage);
@@ -46,8 +55,8 @@ public class App extends Application {
     public Scene getScene() {
         Scene scene = new Scene(new Group(), 640, 480);
 
-        stage.setTitle("Register");
         GridPane grid = new GridPane();
+        stage.setTitle("Register");
         grid.setAlignment(javafx.geometry.Pos.CENTER);
         grid.setHgap(10);
         grid.setVgap(10);
@@ -67,7 +76,7 @@ public class App extends Application {
         Tooltip tooltip = new Tooltip();
         tooltip.setShowDelay(Duration.ZERO);
 
-        Button loginButton = new Button("Register");
+        Button registerButton = new Button("Register");
 
         Hyperlink loginLink = new Hyperlink("Already have an account? Login");
 
@@ -77,12 +86,6 @@ public class App extends Application {
                 changeScences();
             }
         });
-
-        // TODO: reset this later
-        // loginLink.setOnAction(e -> {
-        // stage.close();
-        // new Login().start(new Stage());
-        // });
 
         // password check
         validator.createCheck()
@@ -114,7 +117,7 @@ public class App extends Application {
                 }).decorates(passwordConfirmField)
                 .immediate();
 
-        loginButton.setOnAction(new EventHandler<ActionEvent>() {
+        registerButton.setOnAction(new EventHandler<ActionEvent>() {
 
             @Override
             public void handle(ActionEvent event) {
@@ -142,7 +145,7 @@ public class App extends Application {
         grid.add(passwordField, 0, 4);
         grid.add(passwordConfirmLabel, 0, 5);
         grid.add(passwordConfirmField, 0, 6);
-        grid.add(loginButton, 0, 7);
+        grid.add(registerButton, 0, 7);
         grid.add(loginLink, 0, 8);
 
         Group root = (Group) scene.getRoot();
@@ -168,10 +171,6 @@ public class App extends Application {
         } else {
             return false;
         }
-    }
-
-    public Stage getStage() {
-        return stage;
     }
 
     @Override
