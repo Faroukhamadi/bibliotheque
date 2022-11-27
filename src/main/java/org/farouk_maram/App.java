@@ -3,6 +3,7 @@ package org.farouk_maram;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
@@ -20,7 +21,7 @@ import net.synedra.validatorfx.Validator;
 public class App extends Application {
     private Validator validator = new Validator();
 
-    private boolean isValidPassword(String password) {
+    protected boolean isValidPassword(String password) {
         boolean containsDigits = false;
         boolean containsLetters = false;
         for (int i = 0; i < password.length(); i++) {
@@ -41,13 +42,13 @@ public class App extends Application {
 
     @Override
     public void start(Stage stage) {
-        stage.setTitle("Login");
+        stage.setTitle("Register");
         GridPane grid = new GridPane();
         grid.setAlignment(javafx.geometry.Pos.CENTER);
         grid.setHgap(10);
         grid.setVgap(10);
 
-        Text scenetitle = new Text("Login");
+        Text scenetitle = new Text("Register");
         scenetitle.setFont(Font.font("Sans-serif", 100));
 
         Label usernameLabel = new Label("Username");
@@ -62,15 +63,20 @@ public class App extends Application {
         Tooltip tooltip = new Tooltip();
         tooltip.setShowDelay(Duration.ZERO);
 
-        Button loginButton = new Button("Login");
+        Button loginButton = new Button("Register");
+
+        Hyperlink loginLink = new Hyperlink("Already have an account? Login");
+
+        loginLink.setOnAction(e -> {
+            stage.close();
+            new Login().start(new Stage());
+        });
 
         // password check
         validator.createCheck()
                 .dependsOn("password", passwordField.textProperty())
                 .withMethod(c -> {
                     String password = c.get("password");
-                    System.out.println("password = " + passwordField.getText());
-
                     if (!isValidPassword(password)) {
                         tooltip.setText("Password must contain digits and numbers and be at least 8 characters long");
                         Tooltip.install(passwordField, tooltip);
@@ -95,6 +101,7 @@ public class App extends Application {
                     }
                 }).decorates(passwordConfirmField)
                 .immediate();
+
         // Alert emptyFieldAlert = new Alert(
         // Alert.AlertType.ERROR);
         // emptyFieldAlert.setHeaderText("Empty Field");
@@ -134,6 +141,7 @@ public class App extends Application {
         grid.add(passwordConfirmLabel, 0, 5);
         grid.add(passwordConfirmField, 0, 6);
         grid.add(loginButton, 0, 7);
+        grid.add(loginLink, 0, 8);
 
         Scene scene = new Scene(grid, 640, 480);
         stage.setScene(scene);
