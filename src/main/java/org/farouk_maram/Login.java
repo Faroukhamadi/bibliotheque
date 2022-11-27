@@ -19,9 +19,6 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 import net.synedra.validatorfx.Validator;
 
-/**
- * JavaFX App
- */
 public class Login extends App {
   private Validator validator = new Validator();
 
