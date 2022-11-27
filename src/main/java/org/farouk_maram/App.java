@@ -1,7 +1,10 @@
 package org.farouk_maram;
 
 import javafx.application.Application;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
@@ -15,11 +18,29 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 import net.synedra.validatorfx.Validator;
 
-/**
- * JavaFX App
- */
 public class App extends Application {
     private Validator validator = new Validator();
+    protected Stage stage;
+
+    void changeScences1() {
+        CusInfo cusInfo = new CusInfo();
+        Scene scene = cusInfo.getScene();
+
+        stage.setTitle("Customer Information");
+
+        stage.setScene(scene);
+    }
+
+    void changeScences() {
+        Login login = new Login(stage);
+        System.out.println("Stage in changeScences: " + stage);
+        Scene scene = login.getScene();
+        System.out.println("Stage in changeScences: " + stage);
+
+        stage.setTitle("Login");
+
+        stage.setScene(scene);
+    }
 
     protected boolean isValidPassword(String password) {
         boolean containsDigits = false;
@@ -40,8 +61,15 @@ public class App extends Application {
         }
     }
 
+    public Stage getStage() {
+        return stage;
+    }
+
     @Override
     public void start(Stage stage) {
+        System.out.println("stage in start: " + stage);
+        this.stage = stage;
+
         stage.setTitle("Register");
         GridPane grid = new GridPane();
         grid.setAlignment(javafx.geometry.Pos.CENTER);
@@ -67,10 +95,18 @@ public class App extends Application {
 
         Hyperlink loginLink = new Hyperlink("Already have an account? Login");
 
-        loginLink.setOnAction(e -> {
-            stage.close();
-            new Login().start(new Stage());
+        loginLink.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                changeScences();
+            }
         });
+
+        // TODO: reset this later
+        // loginLink.setOnAction(e -> {
+        // stage.close();
+        // new Login().start(new Stage());
+        // });
 
         // password check
         validator.createCheck()
@@ -102,36 +138,26 @@ public class App extends Application {
                 }).decorates(passwordConfirmField)
                 .immediate();
 
-        // Alert emptyFieldAlert = new Alert(
-        // Alert.AlertType.ERROR);
-        // emptyFieldAlert.setHeaderText("Empty Field");
-        // emptyFieldAlert.setContentText("Please fill all fields");
+        loginButton.setOnAction(new EventHandler<ActionEvent>() {
 
-        // loginButton.setOnAction(new EventHandler<ActionEvent>() {
-        // @Override
-        // public void handle(ActionEvent event) {
-        // if (usernameField.getText().equals("")) {
-        // System.out.println("Username is empty");
-        // emptyFieldAlert.showAndWait();
-        // } else {
-        // System.out.println("Username is not empty " + usernameField.getText());
-        // }
-        // // if (usernameField.getText().equals("farouk") &&
-        // // passwordField.getText().equals("123456")) {
-        // // Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        // // alert.setTitle("Login");
-        // // alert.setHeaderText("Login");
-        // // alert.setContentText("Login Success");
-        // // alert.showAndWait();
-        // // } else {
-        // // Alert alert = new Alert(Alert.AlertType.ERROR);
-        // // alert.setTitle("Login");
-        // // alert.setHeaderText("Login");
-        // // alert.setContentText("Login Failed");
-        // // alert.showAndWait();
-        // // }
-        // }
-        // });
+            @Override
+            public void handle(ActionEvent event) {
+                if (usernameField.getText().equals("farouk") &&
+                        passwordField.getText().equals("123456")) {
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setTitle("Register");
+                    alert.setHeaderText("Registration");
+                    alert.setContentText("Registration Successful");
+                    alert.showAndWait();
+                } else {
+                    Alert alert = new Alert(Alert.AlertType.ERROR);
+                    alert.setTitle("Register");
+                    alert.setHeaderText("Register");
+                    alert.setContentText("Register Failed");
+                    alert.showAndWait();
+                }
+            }
+        });
 
         grid.add(scenetitle, 0, 0);
         grid.add(usernameLabel, 0, 1);

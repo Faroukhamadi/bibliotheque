@@ -1,9 +1,9 @@
 package org.farouk_maram;
 
-import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.scene.Parent;
+import javafx.geometry.Insets;
+import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
@@ -25,13 +25,20 @@ import net.synedra.validatorfx.Validator;
 public class Login extends App {
   private Validator validator = new Validator();
 
-  @Override
-  public void start(Stage stage) {
-    stage.setTitle("Login");
+  public Login(Stage stage) {
+    this.stage = stage;
+  }
+
+  public Scene getScene() {
+    System.out.println("Stage in getScene: " + stage);
+
+    Scene scene = new Scene(new Group(), 640, 480);
+
     GridPane grid = new GridPane();
-    grid.setAlignment(javafx.geometry.Pos.CENTER);
+    grid.setAlignment(javafx.geometry.Pos.BOTTOM_RIGHT);
     grid.setHgap(10);
     grid.setVgap(10);
+    grid.setPadding(new Insets(5, 5, 5, 5));
 
     Text scenetitle = new Text("Login");
     scenetitle.setFont(Font.font("Sans-serif", 100));
@@ -48,10 +55,18 @@ public class Login extends App {
     Button loginButton = new Button("Login");
 
     Hyperlink loginLink = new Hyperlink("Is this your first time here? Register now!");
-    loginLink.setOnAction(e -> {
-      stage.close();
-      new App().start(new Stage());
+
+    loginLink.setOnAction(new EventHandler<ActionEvent>() {
+      @Override
+      public void handle(ActionEvent actionEvent) {
+        changeScences1();
+      }
     });
+
+    // loginLink.setOnAction(e -> {
+    // stage.close();
+    // new App().start(new Stage());
+    // });
 
     // password check
     validator.createCheck()
@@ -68,20 +83,9 @@ public class Login extends App {
         }).decorates(passwordField)
         .immediate();
 
-    Alert emptyFieldAlert = new Alert(
-        Alert.AlertType.ERROR);
-    emptyFieldAlert.setHeaderText("Empty Field");
-    emptyFieldAlert.setContentText("Please fill all fields");
-
     loginButton.setOnAction(new EventHandler<ActionEvent>() {
       @Override
       public void handle(ActionEvent event) {
-        if (usernameField.getText().equals("")) {
-          System.out.println("Username is empty");
-          emptyFieldAlert.showAndWait();
-        } else {
-          System.out.println("Username is not empty " + usernameField.getText());
-        }
         if (usernameField.getText().equals("farouk") &&
             passwordField.getText().equals("123456")) {
           Alert alert = new Alert(Alert.AlertType.INFORMATION);
@@ -104,12 +108,13 @@ public class Login extends App {
     grid.add(usernameField, 0, 2);
     grid.add(passwordLabel, 0, 3);
     grid.add(passwordField, 0, 4);
-    grid.add(loginButton, 0, 7);
-    grid.add(loginLink, 0, 8);
+    grid.add(loginButton, 0, 5);
+    grid.add(loginLink, 0, 6);
 
-    Scene scene = new Scene(grid, 640, 480);
-    stage.setScene(scene);
-    stage.show();
+    Group root = (Group) scene.getRoot();
+    root.getChildren().add(grid);
+
+    return scene;
   }
 
 }
