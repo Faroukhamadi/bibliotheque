@@ -1,5 +1,14 @@
 package org.farouk_maram;
 
+import java.lang.reflect.InvocationTargetException;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.Properties;
+
+import io.github.cdimascio.dotenv.Dotenv;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -175,7 +184,6 @@ public class App extends Application {
 
     @Override
     public void start(Stage stage) {
-        System.out.println("stage in start: " + stage);
         this.stage = stage;
 
         stage.setTitle("Register");
@@ -282,8 +290,50 @@ public class App extends Application {
         stage.show();
     }
 
+    public Connection getConnection()
+            throws SQLException, InstantiationException, IllegalAccessException, IllegalArgumentException,
+            InvocationTargetException, NoSuchMethodException, SecurityException {
+        System.out.println("Connecting to database...");
+        Connection connection = null;
+        Properties connectionProps = new Properties();
+
+        Dotenv dotenv = Dotenv.configure().load();
+
+        String userName = dotenv.get("DB_USERNAME");
+        String password = dotenv.get("DB_PASSWORD");
+
+        System.out.println("Env variables are: ");
+        System.out.println("username: " + userName);
+        System.out.println("password: " + password);
+
+        connectionProps.put("user", userName);
+        connectionProps.put("password", password);
+
+        connection = DriverManager.getConnection(
+                "jdbc:mysql://localhost:3306/test", connectionProps);
+
+        System.out.println("Connected to database!");
+        return connection;
+    }
+
+    public String sayHello() {
+        return "";
+    }
+
     public static void main(String[] args) {
-        launch();
+        App m = new App();
+        try {
+            Connection conn = m.getConnection();
+            Statement statement = conn.createStatement();
+            ResultSet resultSet = statement.executeQuery("SELECT * FROM users");
+            while (resultSet.next()) {
+                System.out
+                        .println(resultSet.getInt(1) + " " + resultSet.getInt(2) + " " + resultSet.getString(3));
+            }
+            launch();
+        } catch (Exception e) {
+            System.err.println("SQLException: " + e);
+        }
     }
 
 }
