@@ -57,13 +57,9 @@ public class Login extends App {
     registerLink.setOnAction(new EventHandler<ActionEvent>() {
       @Override
       public void handle(ActionEvent actionEvent) {
-        System.out.println("this is id: " + Authenticate.getUserId());
-        System.out.println("this is prenom: " + Authenticate.getPrenom());
-
+        System.out.println("is logged in before logging out: " + Authenticate.isLoggedIn());
         Authenticate.logout();
-
-        System.out.println("this is id again: " + Authenticate.getUserId());
-        System.out.println("this is prenom again: " + Authenticate.getPrenom());
+        System.out.println("is logged in after logging out: " + Authenticate.isLoggedIn());
 
         changeScences2();
       }

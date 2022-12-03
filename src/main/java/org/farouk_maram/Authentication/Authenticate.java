@@ -1,14 +1,14 @@
 package org.farouk_maram.Authentication;
 
-import java.util.HashMap;
-
 public class Authenticate {
   private static Authenticate authenticateInstance;
-  private static HashMap<String, String> userInformation = new HashMap<>();
+
+  private static String userId;
+  private static String prenom;
 
   private Authenticate(String userId, String prenom) {
-    userInformation.put("userId", userId);
-    userInformation.put("prenom", prenom);
+    Authenticate.userId = userId;
+    Authenticate.prenom = prenom;
   }
 
   public static Authenticate login(String userId, String prenom) {
@@ -19,15 +19,20 @@ public class Authenticate {
   }
 
   public static void logout() {
-    userInformation = null;
+    userId = null;
+    prenom = null;
+  }
+
+  public static boolean isLoggedIn() {
+    return userId != null && prenom != null;
   }
 
   public static String getUserId() {
-    return userInformation == null ? null : userInformation.get("userId");
+    return userId;
   }
 
   public static String getPrenom() {
-    return userInformation == null ? null : userInformation.get("prenom");
+    return prenom;
   }
 
   @Override

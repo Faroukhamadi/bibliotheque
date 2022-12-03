@@ -23,8 +23,6 @@
             <artifactId>mysql-connector-j</artifactId>
             <version>8.0.31</version>
         </dependency>
-
-        
         <dependency>
             <groupId>net.synedra</groupId>
             <artifactId>validatorfx</artifactId>
@@ -38,6 +36,15 @@
     </dependencies>
     <build>
         <plugins>
+ <plugin>
+                <groupId>org.flywaydb</groupId>
+                <artifactId>flyway-maven-plugin</artifactId>
+                <version>9.8.1</version>
+                <configuration>
+                    <url>jdbc:mysql://localhost:3306/test</url>
+                    <!-- <user>sa</user> -->
+                </configuration>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -54,6 +61,30 @@
                     <mainClass>org.farouk_maram.App</mainClass>
                 </configuration>
             </plugin>
+
+             <plugin>
+
+				<groupId>org.flywaydb</groupId>
+			    <artifactId>flyway-maven-plugin</artifactId>
+			    <version>4.0.3</version>
+
+				<dependencies>
+					<dependency>
+						<groupId>mysql</groupId>
+						<artifactId>mysql-connector-java</artifactId>
+						<version>8.0.12</version>
+					</dependency>
+				</dependencies>
+				
+				<configuration>
+					<user>farouk</user>
+					<password>16/04/2002</password>
+					<url>jdbc:mysql://127.0.0.1:3306/test?useSsl=false</url>
+					<skip>false</skip>
+				</configuration>
+
+			</plugin>
+            
         </plugins>
     </build>
 </project>

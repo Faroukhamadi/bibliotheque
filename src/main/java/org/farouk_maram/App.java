@@ -8,7 +8,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Properties;
 
-import org.farouk_maram.Authentication.Authenticate;
 import org.farouk_maram.Views.CusInfo;
 import org.farouk_maram.Views.Login;
 import org.farouk_maram.Views.Register;
@@ -217,12 +216,6 @@ public class App extends Application {
         loginLink.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                System.out.println("changing scenes from the app class");
-                Authenticate.login("1", "Farouk");
-
-                System.out.println("this is id: " + Authenticate.getUserId());
-                System.out.println("this is prenom: " + Authenticate.getPrenom());
-
                 changeScences();
             }
         });
