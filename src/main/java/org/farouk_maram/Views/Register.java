@@ -1,8 +1,9 @@
-package org.farouk_maram;
+package org.farouk_maram.Views;
+
+import org.farouk_maram.App;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.geometry.Insets;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
@@ -19,10 +20,10 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 import net.synedra.validatorfx.Validator;
 
-public class Login extends App {
+public class Register extends App {
   private Validator validator = new Validator();
 
-  public Login(Stage stage) {
+  public Register(Stage stage) {
     this.stage = stage;
   }
 
@@ -30,12 +31,12 @@ public class Login extends App {
     Scene scene = new Scene(new Group(), 640, 480);
 
     GridPane grid = new GridPane();
+    stage.setTitle("Register");
     grid.setAlignment(javafx.geometry.Pos.CENTER);
     grid.setHgap(10);
     grid.setVgap(10);
-    grid.setPadding(new Insets(5, 5, 5, 5));
 
-    Text scenetitle = new Text("Login");
+    Text scenetitle = new Text("Register");
     scenetitle.setFont(Font.font("Sans-serif", 100));
 
     Label usernameLabel = new Label("Username");
@@ -44,25 +45,23 @@ public class Login extends App {
     Label passwordLabel = new Label("Password");
     PasswordField passwordField = new PasswordField();
 
+    Label passwordConfirmLabel = new Label("Password Confirm");
+    PasswordField passwordConfirmField = new PasswordField();
+
     Tooltip tooltip = new Tooltip();
     tooltip.setShowDelay(Duration.ZERO);
 
-    Button loginButton = new Button("Login");
+    Button registerButton = new Button("Register");
 
-    Hyperlink registerLink = new Hyperlink("Is this your first time here? Register now!");
+    Hyperlink loginLink = new Hyperlink("Already have an account? Login");
 
-    registerLink.setOnAction(new EventHandler<ActionEvent>() {
+    loginLink.setOnAction(new EventHandler<ActionEvent>() {
       @Override
       public void handle(ActionEvent actionEvent) {
-        // changeScences1();
-        changeScences2();
+        System.out.println("changing scenes from the register class");
+        changeScences();
       }
     });
-
-    // loginLink.setOnAction(e -> {
-    // stage.close();
-    // new App().start(new Stage());
-    // });
 
     // password check
     validator.createCheck()
@@ -79,21 +78,37 @@ public class Login extends App {
         }).decorates(passwordField)
         .immediate();
 
-    loginButton.setOnAction(new EventHandler<ActionEvent>() {
+    // password confirmation check
+    validator.createCheck()
+        .dependsOn("password-confirm", passwordConfirmField.textProperty())
+        .withMethod(c -> {
+          String passwordConfirm = c.get("password-confirm");
+          if (!passwordConfirm.equals(passwordField.getText())) {
+            tooltip.setText("Password confirm must match password");
+            Tooltip.install(passwordConfirmField, tooltip);
+            c.error("Password Confirm must match Password");
+          } else {
+            Tooltip.uninstall(passwordConfirmField, tooltip);
+          }
+        }).decorates(passwordConfirmField)
+        .immediate();
+
+    registerButton.setOnAction(new EventHandler<ActionEvent>() {
+
       @Override
       public void handle(ActionEvent event) {
         if (usernameField.getText().equals("farouk") &&
             passwordField.getText().equals("123456")) {
           Alert alert = new Alert(Alert.AlertType.INFORMATION);
-          alert.setTitle("Login");
-          alert.setHeaderText("Login");
-          alert.setContentText("Login Success");
+          alert.setTitle("Register");
+          alert.setHeaderText("Registration");
+          alert.setContentText("Registration Successful");
           alert.showAndWait();
         } else {
           Alert alert = new Alert(Alert.AlertType.ERROR);
-          alert.setTitle("Login");
-          alert.setHeaderText("Login");
-          alert.setContentText("Login Failed");
+          alert.setTitle("Register");
+          alert.setHeaderText("Register");
+          alert.setContentText("Register Failed");
           alert.showAndWait();
         }
       }
@@ -104,13 +119,14 @@ public class Login extends App {
     grid.add(usernameField, 0, 2);
     grid.add(passwordLabel, 0, 3);
     grid.add(passwordField, 0, 4);
-    grid.add(loginButton, 0, 5);
-    grid.add(registerLink, 0, 6);
+    grid.add(passwordConfirmLabel, 0, 5);
+    grid.add(passwordConfirmField, 0, 6);
+    grid.add(registerButton, 0, 7);
+    grid.add(loginLink, 0, 8);
 
     Group root = (Group) scene.getRoot();
     root.getChildren().add(grid);
 
     return scene;
   }
-
 }

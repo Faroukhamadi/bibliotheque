@@ -1,4 +1,4 @@
-package org.farouk_maram;
+package org.farouk_maram.Views;
 
 import java.awt.TextArea;
 import javafx.geometry.Insets;
@@ -17,7 +17,7 @@ public class CusInfo {
   final TextField TF = new TextField("");
   final TextArea TA = new TextArea("");
 
-  String address = " ";
+  String address = "";
 
   public Scene getScene() {
     Scene scene = new Scene(new Group(), 450, 250);

@@ -8,6 +8,11 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Properties;
 
+import org.farouk_maram.Authentication.Authenticate;
+import org.farouk_maram.Views.CusInfo;
+import org.farouk_maram.Views.Login;
+import org.farouk_maram.Views.Register;
+
 import io.github.cdimascio.dotenv.Dotenv;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
@@ -41,7 +46,7 @@ public class App extends Application {
         stage.setScene(scene);
     }
 
-    void changeScences2() {
+    public void changeScences2() {
         Register register = new Register(stage);
         Scene scene = register.getScene();
 
@@ -50,11 +55,9 @@ public class App extends Application {
         stage.setScene(scene);
     }
 
-    void changeScences() {
+    public void changeScences() {
         Login login = new Login(stage);
-        System.out.println("Stage in changeScences: " + stage);
         Scene scene = login.getScene();
-        System.out.println("Stage in changeScences: " + stage);
 
         stage.setTitle("Login");
 
@@ -175,7 +178,7 @@ public class App extends Application {
             }
         }
 
-        if (containsDigits && containsLetters && password.length() >= 8) {
+        if (containsDigits == true && containsLetters == true && password.length() >= 8) {
             return true;
         } else {
             return false;
@@ -214,6 +217,12 @@ public class App extends Application {
         loginLink.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
+                System.out.println("changing scenes from the app class");
+                Authenticate.login("1", "Farouk");
+
+                System.out.println("this is id: " + Authenticate.getUserId());
+                System.out.println("this is prenom: " + Authenticate.getPrenom());
+
                 changeScences();
             }
         });
