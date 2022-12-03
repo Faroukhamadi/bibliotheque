@@ -1,4 +1,4 @@
-create table Emprunt (
+create table emprunt (
   id_emprunt int NOT NULL AUTO_INCREMENT,
   date_emprunt Date,
   date_retour Date,

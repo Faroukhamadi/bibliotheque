@@ -7,6 +7,6 @@ create table usager (
   primary key (id_usager),
   constraint CHK_statut check (
     statut = 'enseignant'
-    and statut = 'etudiant'
+    or statut = 'etudiant'
   )
 );
