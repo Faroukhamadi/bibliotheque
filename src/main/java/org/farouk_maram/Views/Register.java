@@ -1,7 +1,16 @@
 package org.farouk_maram.Views;
 
-import org.farouk_maram.App;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.sql.PreparedStatement;
 
+import org.farouk_maram.App;
+import org.farouk_maram.db.Database;
+
+import de.mkammerer.argon2.Argon2;
+import de.mkammerer.argon2.Argon2Factory;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Group;
@@ -55,13 +64,13 @@ public class Register extends App {
 
     Hyperlink loginLink = new Hyperlink("Already have an account? Login");
 
-    loginLink.setOnAction(new EventHandler<ActionEvent>() {
-      @Override
-      public void handle(ActionEvent actionEvent) {
-        System.out.println("changing scenes from the register class");
-        changeScences();
-      }
-    });
+    // loginLink.setOnAction(new EventHandler<ActionEvent>() {
+    // @Override
+    // public void handle(ActionEvent actionEvent) {
+    // System.out.println("changing scenes from the register class");
+    // changeScences();
+    // }
+    // });
 
     // password check
     validator.createCheck()
@@ -94,24 +103,63 @@ public class Register extends App {
         .immediate();
 
     registerButton.setOnAction(new EventHandler<ActionEvent>() {
-
       @Override
       public void handle(ActionEvent event) {
-        if (usernameField.getText().equals("farouk") &&
-            passwordField.getText().equals("123456")) {
-          Alert alert = new Alert(Alert.AlertType.INFORMATION);
-          alert.setTitle("Register");
-          alert.setHeaderText("Registration");
-          alert.setContentText("Registration Successful");
-          alert.showAndWait();
-        } else {
-          Alert alert = new Alert(Alert.AlertType.ERROR);
-          alert.setTitle("Register");
-          alert.setHeaderText("Register");
-          alert.setContentText("Register Failed");
-          alert.showAndWait();
+        System.out.println("Register button clicked");
+        Database db = new Database();
+        try {
+          Argon2 argon2 = Argon2Factory.create();
+          String hash = argon2.hash(10, 65536, 1, passwordField.getText().toCharArray());
+
+          db.connect();
+          Connection conn = db.getConn();
+          PreparedStatement statement = conn.prepareStatement("SELECT id_gest from gestionnaire where username = ?");
+          statement.setString(1, usernameField.getText());
+
+          ResultSet resultSet = statement.executeQuery();
+          if (resultSet.next()) {
+            System.out.println("username already exists");
+          } else {
+            System.out.println("username does not exist");
+          }
+
+          while (resultSet.next()) {
+            int id = resultSet.getInt("id_usager");
+            System.out.println(id);
+            String nom = resultSet.getString("nom");
+            System.out.println(nom);
+            String prenom = resultSet.getString("prenom");
+            System.out.println(prenom);
+            String statut = resultSet.getString("statut");
+            System.out.println(statut);
+            String email = resultSet.getString("email");
+            System.out.println(email);
+          }
+
+        } catch (SQLException e) {
+          // use error codes to distinguish between different errors
+          e.getErrorCode();
+          System.err.println("SQLException: " + e);
         }
       }
+
+      // @Override
+      // public void handle(ActionEvent event) {
+      // if (usernameField.getText().equals("farouk") &&
+      // passwordField.getText().equals("123456")) {
+      // Alert alert = new Alert(Alert.AlertType.INFORMATION);
+      // alert.setTitle("Register");
+      // alert.setHeaderText("Registration");
+      // alert.setContentText("Registration Successful");
+      // alert.showAndWait();
+      // } else {
+      // Alert alert = new Alert(Alert.AlertType.ERROR);
+      // alert.setTitle("Register");
+      // alert.setHeaderText("Register");
+      // alert.setContentText("Register Failed");
+      // alert.showAndWait();
+      // }
+      // }
     });
 
     grid.add(scenetitle, 0, 0);

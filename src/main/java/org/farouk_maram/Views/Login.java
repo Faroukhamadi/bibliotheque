@@ -1,7 +1,14 @@
 package org.farouk_maram.Views;
 
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+
 import org.farouk_maram.App;
 import org.farouk_maram.Authentication.Authenticate;
+import org.farouk_maram.db.Database;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -54,6 +61,39 @@ public class Login extends App {
 
     Hyperlink registerLink = new Hyperlink("Is this your first time here? Register now!");
 
+    loginButton.setOnAction(new EventHandler<ActionEvent>() {
+      @Override
+      public void handle(ActionEvent event) {
+        System.out.println("Login button clicked");
+        Database db = new Database();
+        try {
+          db.connect();
+          Connection conn = db.getConn();
+          Statement statement = conn.createStatement();
+          ResultSet resultSet = statement.executeQuery("SELECT * FROM usager");
+
+          while (resultSet.next()) {
+            int id = resultSet.getInt("id_usager");
+            System.out.println(id);
+            String nom = resultSet.getString("nom");
+            System.out.println(nom);
+            String prenom = resultSet.getString("prenom");
+            System.out.println(prenom);
+            String statut = resultSet.getString("statut");
+            System.out.println(statut);
+            String email = resultSet.getString("email");
+            System.out.println(email);
+            ArrayList<String> usager = new ArrayList<String>();
+            System.out.println(usager);
+          }
+
+        } catch (SQLException e) {
+          System.err.println("SQLException: " + e);
+        }
+      }
+
+    });
+
     registerLink.setOnAction(new EventHandler<ActionEvent>() {
       @Override
       public void handle(ActionEvent actionEvent) {
@@ -80,25 +120,26 @@ public class Login extends App {
         }).decorates(passwordField)
         .immediate();
 
-    loginButton.setOnAction(new EventHandler<ActionEvent>() {
-      @Override
-      public void handle(ActionEvent event) {
-        if (usernameField.getText().equals("farouk") &&
-            passwordField.getText().equals("123456")) {
-          Alert alert = new Alert(Alert.AlertType.INFORMATION);
-          alert.setTitle("Login");
-          alert.setHeaderText("Login");
-          alert.setContentText("Login Success");
-          alert.showAndWait();
-        } else {
-          Alert alert = new Alert(Alert.AlertType.ERROR);
-          alert.setTitle("Login");
-          alert.setHeaderText("Login");
-          alert.setContentText("Login Failed");
-          alert.showAndWait();
-        }
-      }
-    });
+    // loginButton.setOnAction(new EventHandler<ActionEvent>() {
+    // @Override
+    // public void handle(ActionEvent event) {
+
+    // if (usernameField.getText().equals("farouk") &&
+    // passwordField.getText().equals("123456")) {
+    // Alert alert = new Alert(Alert.AlertType.INFORMATION);
+    // alert.setTitle("Login");
+    // alert.setHeaderText("Login");
+    // alert.setContentText("Login Success");
+    // alert.showAndWait();
+    // } else {
+    // Alert alert = new Alert(Alert.AlertType.ERROR);
+    // alert.setTitle("Login");
+    // alert.setHeaderText("Login");
+    // alert.setContentText("Login Failed");
+    // alert.showAndWait();
+    // }
+    // }
+    // });
 
     grid.add(scenetitle, 0, 0);
     grid.add(usernameLabel, 0, 1);

@@ -12,6 +12,13 @@
     <dependencies>
 
         <dependency>
+            <groupId>de.mkammerer</groupId>
+            <artifactId>argon2-jvm-nolibs</artifactId>
+            <version>2.11</version>
+        </dependency>
+
+
+        <dependency>
             <groupId>io.github.cdimascio</groupId>
             <artifactId>dotenv-java</artifactId>
             <version>2.3.1</version>
@@ -77,9 +84,9 @@
 				</dependencies>
 				
 				<configuration>
-					<user>farouk</user>
-					<password>16/04/2002</password>
-					<url>jdbc:mysql://127.0.0.1:3306/test?useSsl=false</url>
+					<user>${FLYWAY_USERNAME}</user>
+					<password>${FLYWAY_PASSWORD}</password>
+					<url>jdbc:mysql://127.0.0.1:3306/bibliotheque?useSsl=false</url>
 					<skip>false</skip>
 				</configuration>
 

@@ -18,3 +18,8 @@ buildNumber.properties
 
 # env variables
 *.env
+
+# file with database credentials
+set_env.sh
+
+salt.txt
