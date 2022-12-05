@@ -1,11 +1,11 @@
 package org.farouk_maram.Views;
 
 import java.sql.Connection;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.PreparedStatement;
 
 import org.farouk_maram.App;
+import org.farouk_maram.Authentication.Authenticate;
 import org.farouk_maram.db.Database;
 
 import de.mkammerer.argon2.Argon2;
@@ -26,6 +26,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import net.synedra.validatorfx.ValidationResult;
 import net.synedra.validatorfx.Validator;
 
 public class Register extends App {
@@ -96,17 +97,37 @@ public class Register extends App {
     registerButton.setOnAction(new EventHandler<ActionEvent>() {
       @Override
       public void handle(ActionEvent event) {
-        System.out.println("Register button clicked");
+        // enum for validation
+        ValidationResult result = validator.getValidationResult();
+        if (result.getMessages().size() > 0) {
+          Alert alert = new Alert(Alert.AlertType.ERROR);
+          alert.setTitle("Register");
+          alert.setHeaderText("Register");
+          alert.setContentText("Register Failed");
+          alert.showAndWait();
+          return;
+        }
+
         Database db = new Database();
         try {
-
           db.connect();
           Connection conn = db.getConn();
-          PreparedStatement statement = conn.prepareStatement("SELECT id_gest from gestionnaire where username = ?");
-          statement.setString(1, usernameField.getText());
 
-          ResultSet resultSet = statement.executeQuery();
-          if (resultSet.next()) {
+          Argon2 argon2 = Argon2Factory.create();
+          String hash = argon2.hash(10, 65536, 1, passwordField.getText().toCharArray());
+
+          PreparedStatement insertStatement = conn
+              .prepareStatement(
+                  "INSERT INTO gestionnaire (username, password) VALUES (?, ?)");
+          insertStatement.setString(1, usernameField.getText());
+          insertStatement.setString(2, hash);
+          insertStatement.executeUpdate();
+          Authenticate.login(usernameField.getText());
+          // TODO: change schenes after creating user
+
+        } catch (SQLException e) {
+          // use error codes to distinguish between different errors
+          if (e.getErrorCode() == 1062) {
             // user already exists
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Error");
@@ -114,53 +135,11 @@ public class Register extends App {
             alert.setContentText("Please choose another username");
             alert.showAndWait();
           } else {
-            // user does not exist
-            Argon2 argon2 = Argon2Factory.create();
-            String hash = argon2.hash(10, 65536, 1, passwordField.getText().toCharArray());
-            PreparedStatement insertStatement = conn
-                .prepareStatement("INSERT INTO gestionnaire (username, password) VALUES (?, ?)");
-            insertStatement.setString(1, usernameField.getText());
-            insertStatement.setString(2, hash);
-            System.out.println("hello3");
+            e.printStackTrace();
           }
-
-          while (resultSet.next()) {
-            int id = resultSet.getInt("id_usager");
-            System.out.println(id);
-            String nom = resultSet.getString("nom");
-            System.out.println(nom);
-            String prenom = resultSet.getString("prenom");
-            System.out.println(prenom);
-            String statut = resultSet.getString("statut");
-            System.out.println(statut);
-            String email = resultSet.getString("email");
-            System.out.println(email);
-          }
-
-        } catch (SQLException e) {
-          // use error codes to distinguish between different errors
-          e.getErrorCode();
-          System.err.println("SQLException: " + e);
         }
       }
 
-      // @Override
-      // public void handle(ActionEvent event) {
-      // if (usernameField.getText().equals("farouk") &&
-      // passwordField.getText().equals("123456")) {
-      // Alert alert = new Alert(Alert.AlertType.INFORMATION);
-      // alert.setTitle("Register");
-      // alert.setHeaderText("Registration");
-      // alert.setContentText("Registration Successful");
-      // alert.showAndWait();
-      // } else {
-      // Alert alert = new Alert(Alert.AlertType.ERROR);
-      // alert.setTitle("Register");
-      // alert.setHeaderText("Register");
-      // alert.setContentText("Register Failed");
-      // alert.showAndWait();
-      // }
-      // }
     });
 
     grid.add(scenetitle, 0, 0);
