@@ -1,4 +1,4 @@
-package org.farouk_maram.Views;
+package org.farouk_maram.controllers;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -9,11 +9,11 @@ import java.util.ArrayList;
 import org.farouk_maram.App;
 import org.farouk_maram.Authentication.Authenticate;
 import org.farouk_maram.db.Database;
+import org.farouk_maram.utils.SubmitFailAlert;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
-import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Hyperlink;
@@ -22,10 +22,12 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import net.synedra.validatorfx.ValidationResult;
 import net.synedra.validatorfx.Validator;
 
 public class Login extends App {
@@ -36,9 +38,13 @@ public class Login extends App {
   }
 
   public Scene getScene() {
-    Scene scene = new Scene(new Group(), 640, 480);
+    StackPane stackPane = new StackPane();
+
+    Scene scene = new Scene(stackPane, 640, 480);
 
     GridPane grid = new GridPane();
+
+    stage.setTitle("Login");
     grid.setAlignment(javafx.geometry.Pos.CENTER);
     grid.setHgap(10);
     grid.setVgap(10);
@@ -60,9 +66,30 @@ public class Login extends App {
 
     Hyperlink registerLink = new Hyperlink("Is this your first time here? Register now!");
 
+    // password check
+    validator.createCheck()
+        .dependsOn("password", passwordField.textProperty())
+        .withMethod(c -> {
+          String password = c.get("password");
+          if (!isValidPassword(password)) {
+            tooltip.setText("Password must contain digits and numbers and be at least 8 characters long");
+            Tooltip.install(passwordField, tooltip);
+            c.error("Password must contain digits and numbers and be at least 8 characters long");
+          } else {
+            Tooltip.uninstall(passwordField, tooltip);
+          }
+        }).decorates(passwordField)
+        .immediate();
+
     loginButton.setOnAction(new EventHandler<ActionEvent>() {
       @Override
       public void handle(ActionEvent event) {
+        ValidationResult result = validator.getValidationResult();
+        if (result.getMessages().size() > 0) {
+          SubmitFailAlert alert = new SubmitFailAlert();
+          alert.showAlert("Login");
+          return;
+        }
         System.out.println("Login button clicked");
         Database db = new Database();
         try {
@@ -99,46 +126,9 @@ public class Login extends App {
         System.out.println("is logged in before logging out: " + Authenticate.isLoggedIn());
         Authenticate.logout();
         System.out.println("is logged in after logging out: " + Authenticate.isLoggedIn());
-
         changeScences2();
       }
     });
-
-    // password check
-    validator.createCheck()
-        .dependsOn("password", passwordField.textProperty())
-        .withMethod(c -> {
-          String password = c.get("password");
-          if (!isValidPassword(password)) {
-            tooltip.setText("Password must contain digits and numbers and be at least 8 characters long");
-            Tooltip.install(passwordField, tooltip);
-            c.error("Password must contain digits and numbers and be at least 8 characters long");
-          } else {
-            Tooltip.uninstall(passwordField, tooltip);
-          }
-        }).decorates(passwordField)
-        .immediate();
-
-    // loginButton.setOnAction(new EventHandler<ActionEvent>() {
-    // @Override
-    // public void handle(ActionEvent event) {
-
-    // if (usernameField.getText().equals("farouk") &&
-    // passwordField.getText().equals("123456")) {
-    // Alert alert = new Alert(Alert.AlertType.INFORMATION);
-    // alert.setTitle("Login");
-    // alert.setHeaderText("Login");
-    // alert.setContentText("Login Success");
-    // alert.showAndWait();
-    // } else {
-    // Alert alert = new Alert(Alert.AlertType.ERROR);
-    // alert.setTitle("Login");
-    // alert.setHeaderText("Login");
-    // alert.setContentText("Login Failed");
-    // alert.showAndWait();
-    // }
-    // }
-    // });
 
     grid.add(scenetitle, 0, 0);
     grid.add(usernameLabel, 0, 1);
@@ -148,7 +138,7 @@ public class Login extends App {
     grid.add(loginButton, 0, 5);
     grid.add(registerLink, 0, 6);
 
-    Group root = (Group) scene.getRoot();
+    StackPane root = (StackPane) scene.getRoot();
     root.getChildren().add(grid);
 
     return scene;

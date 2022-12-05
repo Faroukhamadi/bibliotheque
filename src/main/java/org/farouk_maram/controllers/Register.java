@@ -1,4 +1,4 @@
-package org.farouk_maram.Views;
+package org.farouk_maram.controllers;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -7,6 +7,7 @@ import java.sql.PreparedStatement;
 import org.farouk_maram.App;
 import org.farouk_maram.Authentication.Authenticate;
 import org.farouk_maram.db.Database;
+import org.farouk_maram.utils.SubmitFailAlert;
 
 import de.mkammerer.argon2.Argon2;
 import de.mkammerer.argon2.Argon2Factory;
@@ -22,6 +23,7 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
@@ -37,7 +39,9 @@ public class Register extends App {
   }
 
   public Scene getScene() {
-    Scene scene = new Scene(new Group(), 640, 480);
+    StackPane stackPane = new StackPane();
+
+    Scene scene = new Scene(stackPane, 640, 480);
 
     GridPane grid = new GridPane();
     stage.setTitle("Register");
@@ -63,6 +67,13 @@ public class Register extends App {
     Button registerButton = new Button("Register");
 
     Hyperlink loginLink = new Hyperlink("Already have an account? Login");
+
+    loginLink.setOnAction(new EventHandler<ActionEvent>() {
+      @Override
+      public void handle(ActionEvent actionEvent) {
+        changeScences();
+      }
+    });
 
     // password check
     validator.createCheck()
@@ -100,11 +111,8 @@ public class Register extends App {
         // enum for validation
         ValidationResult result = validator.getValidationResult();
         if (result.getMessages().size() > 0) {
-          Alert alert = new Alert(Alert.AlertType.ERROR);
-          alert.setTitle("Register");
-          alert.setHeaderText("Register");
-          alert.setContentText("Register Failed");
-          alert.showAndWait();
+          SubmitFailAlert alert = new SubmitFailAlert();
+          alert.showAlert("Register");
           return;
         }
 
@@ -152,7 +160,7 @@ public class Register extends App {
     grid.add(registerButton, 0, 7);
     grid.add(loginLink, 0, 8);
 
-    Group root = (Group) scene.getRoot();
+    StackPane root = (StackPane) scene.getRoot();
     root.getChildren().add(grid);
 
     return scene;

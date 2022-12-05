@@ -7,8 +7,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 import org.farouk_maram.Authentication.Authenticate;
-import org.farouk_maram.Views.Login;
-import org.farouk_maram.Views.Register;
+import org.farouk_maram.controllers.Login;
+import org.farouk_maram.controllers.Register;
 import org.farouk_maram.db.Database;
 
 import de.mkammerer.argon2.Argon2;
@@ -16,6 +16,7 @@ import de.mkammerer.argon2.Argon2Factory;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
@@ -67,9 +68,8 @@ public class App extends Application {
         // containsLetters = true;
         // }
         // }
-
         // if (containsDigits == true && containsLetters == true && password.length() >=
-        // 8) {
+        // {
         // return true;
         // } else {
         // return false;
@@ -82,9 +82,11 @@ public class App extends Application {
 
         stage.setTitle("Register");
         GridPane grid = new GridPane();
+        System.out.println("grid props: " + grid.getProperties());
         grid.setAlignment(javafx.geometry.Pos.CENTER);
         grid.setHgap(10);
         grid.setVgap(10);
+        grid.setPadding(new Insets(5, 5, 5, 5));
 
         Text scenetitle = new Text("Register");
         scenetitle.setFont(Font.font("Sans-serif", 100));
