@@ -3,7 +3,6 @@ package org.farouk_maram.Views;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.sql.PreparedStatement;
 
 import org.farouk_maram.App;
@@ -64,14 +63,6 @@ public class Register extends App {
 
     Hyperlink loginLink = new Hyperlink("Already have an account? Login");
 
-    // loginLink.setOnAction(new EventHandler<ActionEvent>() {
-    // @Override
-    // public void handle(ActionEvent actionEvent) {
-    // System.out.println("changing scenes from the register class");
-    // changeScences();
-    // }
-    // });
-
     // password check
     validator.createCheck()
         .dependsOn("password", passwordField.textProperty())
@@ -108,8 +99,6 @@ public class Register extends App {
         System.out.println("Register button clicked");
         Database db = new Database();
         try {
-          Argon2 argon2 = Argon2Factory.create();
-          String hash = argon2.hash(10, 65536, 1, passwordField.getText().toCharArray());
 
           db.connect();
           Connection conn = db.getConn();
@@ -118,9 +107,21 @@ public class Register extends App {
 
           ResultSet resultSet = statement.executeQuery();
           if (resultSet.next()) {
-            System.out.println("username already exists");
+            // user already exists
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Error");
+            alert.setHeaderText("Username already taken");
+            alert.setContentText("Please choose another username");
+            alert.showAndWait();
           } else {
-            System.out.println("username does not exist");
+            // user does not exist
+            Argon2 argon2 = Argon2Factory.create();
+            String hash = argon2.hash(10, 65536, 1, passwordField.getText().toCharArray());
+            PreparedStatement insertStatement = conn
+                .prepareStatement("INSERT INTO gestionnaire (username, password) VALUES (?, ?)");
+            insertStatement.setString(1, usernameField.getText());
+            insertStatement.setString(2, hash);
+            System.out.println("hello3");
           }
 
           while (resultSet.next()) {

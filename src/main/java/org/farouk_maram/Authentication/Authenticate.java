@@ -3,41 +3,34 @@ package org.farouk_maram.Authentication;
 public class Authenticate {
   private static Authenticate authenticateInstance;
 
-  private static String userId;
-  private static String prenom;
+  private static String username;
 
-  private Authenticate(String userId, String prenom) {
-    Authenticate.userId = userId;
-    Authenticate.prenom = prenom;
+  private Authenticate(String username) {
+    Authenticate.username = username;
   }
 
-  public static Authenticate login(String userId, String prenom) {
+  public static Authenticate login(String username) {
     if (authenticateInstance == null) {
-      authenticateInstance = new Authenticate(userId, prenom);
+      authenticateInstance = new Authenticate(username);
     }
     return authenticateInstance;
   }
 
   public static void logout() {
-    userId = null;
-    prenom = null;
+    username = null;
   }
 
   public static boolean isLoggedIn() {
-    return userId != null && prenom != null;
+    return username != null;
   }
 
-  public static String getUserId() {
-    return userId;
-  }
-
-  public static String getPrenom() {
-    return prenom;
+  public static String getUsername() {
+    return username;
   }
 
   @Override
   public String toString() {
-    return "userId: " + getUserId() + ", prenom: " + getPrenom();
+    return "username: " + getUsername();
   }
 
 }
