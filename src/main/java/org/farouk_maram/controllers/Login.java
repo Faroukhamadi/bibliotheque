@@ -1,20 +1,22 @@
 package org.farouk_maram.controllers;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.ArrayList;
 
 import org.farouk_maram.App;
 import org.farouk_maram.Authentication.Authenticate;
 import org.farouk_maram.db.Database;
 import org.farouk_maram.utils.SubmitFailAlert;
 
+import de.mkammerer.argon2.Argon2;
+import de.mkammerer.argon2.Argon2Factory;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
@@ -95,29 +97,39 @@ public class Login extends App {
         try {
           db.connect();
           Connection conn = db.getConn();
-          Statement statement = conn.createStatement();
-          ResultSet resultSet = statement.executeQuery("SELECT * FROM usager");
 
-          while (resultSet.next()) {
-            int id = resultSet.getInt("id_usager");
-            System.out.println(id);
-            String nom = resultSet.getString("nom");
-            System.out.println(nom);
-            String prenom = resultSet.getString("prenom");
-            System.out.println(prenom);
-            String statut = resultSet.getString("statut");
-            System.out.println(statut);
-            String email = resultSet.getString("email");
-            System.out.println(email);
-            ArrayList<String> usager = new ArrayList<String>();
-            System.out.println(usager);
+          Argon2 argon2 = Argon2Factory.create();
+
+          PreparedStatement stmt = conn.prepareStatement("SELECT * FROM gestionnaire WHERE username = ?");
+          stmt.setString(1, usernameField.getText());
+
+          ResultSet rs = stmt.executeQuery();
+          if (rs.next()) {
+            boolean passwordMatches = argon2.verify(rs.getString("password"), passwordField.getText().toCharArray());
+            if (passwordMatches) {
+              System.out.println("password matches");
+              Authenticate.login(usernameField.getText());
+              System.out.println("is logged in: " + Authenticate.isLoggedIn());
+              System.out.println("username is: " + Authenticate.getUsername());
+
+            } else {
+              System.out.println("Login failed");
+              SubmitFailAlert alert = new SubmitFailAlert();
+              alert.showAlert("Login");
+            }
+          } else {
+            System.out.println("Login failed");
+            // user already exists
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Error");
+            alert.setHeaderText("Username does not exist");
+            alert.setContentText("Please register first or try again");
+            alert.showAndWait();
           }
-
         } catch (SQLException e) {
           System.err.println("SQLException: " + e);
         }
       }
-
     });
 
     registerLink.setOnAction(new EventHandler<ActionEvent>() {

@@ -42,7 +42,6 @@ public class App extends Application {
         Scene scene = register.getScene();
 
         stage.setTitle("Register");
-
         stage.setScene(scene);
     }
 
