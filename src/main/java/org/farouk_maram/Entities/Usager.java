@@ -2,27 +2,29 @@ package org.farouk_maram.Entities;
 
 import java.util.ArrayList;
 
+import javafx.beans.property.SimpleStringProperty;
+
 enum Statut {
   ETUDIANT, ENSEIGNANT
 }
 
 public class Usager extends Personne {
   private int id;
-  private String email;
+  private SimpleStringProperty email;
   private Statut statut;
   private ArrayList<Emprunt> emprunts = new ArrayList<Emprunt>();
 
   public Usager(int id, String nom, String prenom, String email, Statut statut) {
     super(nom, prenom);
     this.id = id;
-    this.email = email;
+    this.email.setValue(email);
     this.statut = statut;
   }
 
   public Usager(int id, String nom, String prenom, String email, Statut statut, ArrayList<Emprunt> emprunts) {
     super(nom, prenom);
     this.id = id;
-    this.email = email;
+    this.email.setValue(email);
     this.statut = statut;
     this.emprunts = emprunts;
   }
@@ -35,12 +37,16 @@ public class Usager extends Personne {
     this.id = id;
   }
 
-  public String getEmail() {
+  public SimpleStringProperty getEmailProperty() {
     return email;
   }
 
+  public String getEmail() {
+    return email.get();
+  }
+
   public void setEmail(String email) {
-    this.email = email;
+    this.email.setValue(email);
   }
 
   public Statut getStatut() {

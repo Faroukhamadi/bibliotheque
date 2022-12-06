@@ -7,9 +7,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 import org.farouk_maram.Authentication.Authenticate;
-import org.farouk_maram.controllers.Home;
+import org.farouk_maram.controllers.HomeLivre;
 import org.farouk_maram.controllers.Login;
-import org.farouk_maram.controllers.Register;
 import org.farouk_maram.db.Database;
 
 import de.mkammerer.argon2.Argon2;
@@ -39,7 +38,7 @@ public class App extends Application {
     protected Stage stage;
 
     public void changeScences2() {
-        Home home = new Home(stage);
+        HomeLivre home = new HomeLivre(stage);
         Scene scene = home.getScene();
 
         stage.setTitle("Home");

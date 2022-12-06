@@ -1,16 +1,18 @@
 package org.farouk_maram.Entities;
 
+import javafx.beans.property.SimpleStringProperty;
+
 public class Livre {
   private int id;
-  private String titre;
-  private String auteur;
-  private String isbn;
+  private SimpleStringProperty titre = new SimpleStringProperty();
+  private SimpleStringProperty auteur = new SimpleStringProperty();
+  private SimpleStringProperty isbn = new SimpleStringProperty();
 
   public Livre(int id, String titre, String auteur, String isbn) {
     this.id = id;
-    this.titre = titre;
-    this.auteur = auteur;
-    this.isbn = isbn;
+    this.titre.setValue(titre);
+    this.auteur.setValue(auteur);
+    this.isbn.setValue(isbn);
   }
 
   public int getId() {
@@ -21,33 +23,45 @@ public class Livre {
     this.id = id;
   }
 
-  public String getTitre() {
+  public SimpleStringProperty getTitreProperty() {
     return titre;
   }
 
-  public void setTitre(String titre) {
+  public String getTitre() {
+    return titre.get();
+  }
+
+  public void setTitre(SimpleStringProperty titre) {
     this.titre = titre;
   }
 
-  public String getAuteur() {
+  public SimpleStringProperty getAuteurProperty() {
     return auteur;
   }
 
-  public void setAuteur(String auteur) {
+  public String getAuteur() {
+    return auteur.get();
+  }
+
+  public void setAuteur(SimpleStringProperty auteur) {
     this.auteur = auteur;
   }
 
-  public String getIsbn() {
+  public SimpleStringProperty getIsbnProperty() {
     return isbn;
   }
 
-  public void setIsbn(String isbn) {
+  public String getIsbn() {
+    return isbn.get();
+  }
+
+  public void setIsbn(SimpleStringProperty isbn) {
     this.isbn = isbn;
   }
 
   @Override
   public String toString() {
-    return "Livre [auteur=" + auteur + ", id=" + id + ", isbn=" + isbn + ", titre=" + titre + "]";
+    return "Livre [auteur=" + auteur.get() + ", id=" + id + ", isbn=" + isbn.get() + ", titre=" + titre.get() + "]";
   }
 
 }

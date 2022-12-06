@@ -11,12 +11,21 @@
     </properties>
     <dependencies>
 
+    <!-- Keep this on linux -->
+<!-- 
         <dependency>
             <groupId>de.mkammerer</groupId>
             <artifactId>argon2-jvm-nolibs</artifactId>
             <version>2.11</version>
-        </dependency>
+        </dependency> -->
 
+<dependency>
+
+<!-- Use this in windows -->
+    <groupId>de.mkammerer</groupId>
+    <artifactId>argon2-jvm</artifactId>
+    <version>2.11</version>
+</dependency>
 
         <dependency>
             <groupId>io.github.cdimascio</groupId>
@@ -86,7 +95,8 @@
 				<configuration>
 					<user>${FLYWAY_USERNAME}</user>
 					<password>${FLYWAY_PASSWORD}</password>
-					<url>jdbc:mysql://127.0.0.1:3306/bibliotheque?useSsl=false</url>
+                    <!-- only use amp with windows -->
+					<url>jdbc:mysql://127.0.0.1:3306/bibliotheque?useSsl=false&amp;useJDBCCompliantTimezoneShift=true&amp;useLegacyDatetimeCode=false&amp;serverTimezone=UTC</url>
 					<skip>false</skip>
 				</configuration>
 
