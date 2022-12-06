@@ -138,6 +138,7 @@ public class Login extends App {
         System.out.println("is logged in before logging out: " + Authenticate.isLoggedIn());
         Authenticate.logout();
         System.out.println("is logged in after logging out: " + Authenticate.isLoggedIn());
+        // temporarly change this to test the search
         changeScences2();
       }
     });

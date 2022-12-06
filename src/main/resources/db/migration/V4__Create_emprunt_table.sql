@@ -1,6 +1,6 @@
 create table emprunt (
   id_emprunt int NOT NULL AUTO_INCREMENT,
-  date_emprunt Date,
+  date_emprunt Date NOT NULL,
   date_retour Date,
   id_livre int NOT NULL,
   id_usager int NOT NULL,

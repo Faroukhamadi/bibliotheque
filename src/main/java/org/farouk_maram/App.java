@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 import org.farouk_maram.Authentication.Authenticate;
+import org.farouk_maram.controllers.Home;
 import org.farouk_maram.controllers.Login;
 import org.farouk_maram.controllers.Register;
 import org.farouk_maram.db.Database;
@@ -38,11 +39,17 @@ public class App extends Application {
     protected Stage stage;
 
     public void changeScences2() {
-        Register register = new Register(stage);
-        Scene scene = register.getScene();
+        Home home = new Home(stage);
+        Scene scene = home.getScene();
 
-        stage.setTitle("Register");
+        stage.setTitle("Home");
         stage.setScene(scene);
+
+        // Register register = new Register(stage);
+        // Scene scene = register.getScene();
+
+        // stage.setTitle("Register");
+        // stage.setScene(scene);
     }
 
     public void changeScences() {
