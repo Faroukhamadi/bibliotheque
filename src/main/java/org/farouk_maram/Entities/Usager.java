@@ -2,11 +2,9 @@ package org.farouk_maram.Entities;
 
 import java.util.ArrayList;
 
-import javafx.beans.property.SimpleStringProperty;
+import org.farouk_maram.Statut;
 
-enum Statut {
-  ETUDIANT, ENSEIGNANT
-}
+import javafx.beans.property.SimpleStringProperty;
 
 public class Usager extends Personne {
   private int id;
