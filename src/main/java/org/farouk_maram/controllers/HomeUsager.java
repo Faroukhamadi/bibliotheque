@@ -34,6 +34,9 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 public class HomeUsager extends App implements HomeCRUD<Usager> {
+  private TableView<Usager> table = new TableView<>();
+  private final ObservableList<Usager> usagers = FXCollections.observableArrayList();
+
   @Override
   public int addOne(Usager usager) {
     Database db = new Database();
@@ -116,9 +119,6 @@ public class HomeUsager extends App implements HomeCRUD<Usager> {
     }
   }
 
-  private TableView<Usager> table = new TableView<>();
-  private final ObservableList<Usager> usagers = FXCollections.observableArrayList();
-
   @Override
   public void fetchAll() {
     Database db = new Database();
@@ -194,7 +194,7 @@ public class HomeUsager extends App implements HomeCRUD<Usager> {
     table.getColumns().addAll(idCol, nomCol, prenomCol, statutCol, emailCol);
 
     ChoiceBox<String> choiceBox = new ChoiceBox<>();
-    choiceBox.getItems().addAll("Id", "Prenom", "Statut", "Email");
+    choiceBox.getItems().addAll("Id", "Nom", "Prenom", "Statut", "Email");
     choiceBox.setValue("Prenom");
 
     TextField textField = new TextField();
