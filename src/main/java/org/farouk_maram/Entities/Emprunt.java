@@ -2,12 +2,16 @@ package org.farouk_maram.Entities;
 
 import java.sql.Date;
 
+import javafx.beans.property.SimpleIntegerProperty;
+
 public class Emprunt {
   private int id;
   private Date dateEmprunt;
   private Date dateRetour;
   private Livre livre;
   private Usager usager;
+  private SimpleIntegerProperty livreId;
+  private SimpleIntegerProperty usagerId;
 
   public Emprunt(int id, Date dateEmprunt, Date dateRetour, Livre livre, Usager usager) {
     this.id = id;
@@ -15,6 +19,14 @@ public class Emprunt {
     this.dateRetour = dateRetour;
     this.livre = livre;
     this.usager = usager;
+  }
+
+  public Emprunt(int id, Date dateEmprunt, Date dateRetour, int livreId, int usagerId) {
+    this.id = id;
+    this.dateEmprunt = dateEmprunt;
+    this.dateRetour = dateRetour;
+    this.livreId.set(livreId);
+    this.usagerId.set(usagerId);
   }
 
   public int getId() {
@@ -61,6 +73,22 @@ public class Emprunt {
   public String toString() {
     return "Emprunt [dateEmprunt=" + dateEmprunt + ", dateRetour=" + dateRetour + ", id=" + id + ", livre=" + livre
         + ", usager=" + usager + "]";
+  }
+
+  public SimpleIntegerProperty getLivreId() {
+    return livreId;
+  }
+
+  public void setLivreId(SimpleIntegerProperty livreId) {
+    this.livreId = livreId;
+  }
+
+  public SimpleIntegerProperty getUsagerId() {
+    return usagerId;
+  }
+
+  public void setUsagerId(SimpleIntegerProperty usagerId) {
+    this.usagerId = usagerId;
   }
 
 }
