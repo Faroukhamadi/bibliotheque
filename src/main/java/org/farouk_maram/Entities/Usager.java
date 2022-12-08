@@ -19,6 +19,13 @@ public class Usager extends Personne {
     this.statut = statut;
   }
 
+  public Usager(int id, String email) {
+    super(null, null);
+    this.statut = null;
+    this.id = id;
+    this.email.setValue(email);
+  }
+
   public Usager(int id, String nom, String prenom, String email, Statut statut, ArrayList<Emprunt> emprunts) {
     super(nom, prenom);
     this.id = id;

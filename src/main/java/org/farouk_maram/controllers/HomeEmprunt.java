@@ -7,8 +7,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 import org.farouk_maram.App;
-import org.farouk_maram.Entities.Emprunt;
-import org.farouk_maram.Entities.Livre;
+import org.farouk_maram.Entities.EmpruntForHome;
 import org.farouk_maram.db.Database;
 import org.farouk_maram.interfaces.ManyFetcher;
 
@@ -32,8 +31,8 @@ import javafx.stage.Stage;
 
 // change select query to sort by date
 public class HomeEmprunt extends App implements ManyFetcher {
-  private TableView<Emprunt> table = new TableView<>();
-  private final ObservableList<Emprunt> emprunts = FXCollections.observableArrayList();
+  private TableView<EmpruntForHome> table = new TableView<>();
+  private final ObservableList<EmpruntForHome> emprunts = FXCollections.observableArrayList();
 
   @Override
   public void fetchAll() {
@@ -43,20 +42,25 @@ public class HomeEmprunt extends App implements ManyFetcher {
       Connection conn = db.getConn();
       Statement statement = conn.createStatement();
       ResultSet resultSet = statement
-          .executeQuery("select * from emprunt e, livre l where e.livre_id = l.id_livre order by date_emprunt desc");
+          .executeQuery(
+              "select * from emprunt e, livre l, usager u where e.livre_id = l.id_livre and u.id_usager = e.usager_id order by date_emprunt desc");
       while (resultSet.next()) {
         int id = resultSet.getInt("id_emprunt");
         Date dateEmprunt = resultSet.getDate("date_emprunt");
-        Date dateRetour = resultSet.getDate("date_retour");
+        String dateRetour = resultSet.getString("date_retour");
         String titre = resultSet.getString("titre");
         String auteur = resultSet.getString("auteur");
         String isbn = resultSet.getString("isbn");
-        int idLivre = resultSet.getInt("id_livre");
-        int idUsager = resultSet.getInt("id_usager");
+        String email = resultSet.getString("email");
 
-        Emprunt emprunt = new Emprunt(id, dateEmprunt, dateRetour, idLivre, idUsager);
+        if (dateRetour == null) {
+          EmpruntForHome emprunt = new EmpruntForHome(id, dateEmprunt, "Not returned yet", titre, auteur, isbn, email);
+          emprunts.add(emprunt);
+        } else {
+          EmpruntForHome emprunt = new EmpruntForHome(id, dateEmprunt, dateRetour, titre, auteur, isbn, email);
+          emprunts.add(emprunt);
+        }
 
-        emprunts.add(emprunt);
       }
 
     } catch (SQLException e) {
@@ -85,43 +89,47 @@ public class HomeEmprunt extends App implements ManyFetcher {
 
     table.setEditable(true);
 
-    TableColumn<Emprunt, String> idCol = new TableColumn<>("Id");
+    TableColumn<EmpruntForHome, String> idCol = new TableColumn<>("Id");
     idCol.setMinWidth(100);
     idCol.setCellValueFactory(
-        new PropertyValueFactory<Emprunt, String>("id"));
+        new PropertyValueFactory<>("id"));
 
-    TableColumn<Emprunt, String> titreCol = new TableColumn<>("Titre");
+    TableColumn<EmpruntForHome, String> titreCol = new TableColumn<>("Titre");
     titreCol.setMinWidth(100);
     titreCol.setCellValueFactory(
-        new PropertyValueFactory<Emprunt, String>("titre"));
+        new PropertyValueFactory<>("titre"));
 
-    TableColumn<Emprunt, String> auteurCol = new TableColumn<>("Auteur");
+    TableColumn<EmpruntForHome, String> auteurCol = new TableColumn<>("Auteur");
     auteurCol.setMinWidth(200);
     auteurCol.setCellValueFactory(
-        new PropertyValueFactory<Emprunt, String>("auteur"));
+        new PropertyValueFactory<>("auteur"));
 
-    TableColumn<Emprunt, String> isbnCol = new TableColumn<>("Isbn");
-    auteurCol.setMinWidth(200);
-    auteurCol.setCellValueFactory(
-        new PropertyValueFactory<Emprunt, String>("isbn"));
+    TableColumn<EmpruntForHome, String> isbnCol = new TableColumn<>("Isbn");
+    isbnCol.setMinWidth(200);
+    isbnCol.setCellValueFactory(
+        new PropertyValueFactory<>("isbn"));
 
-    TableColumn<Emprunt, String> dateEmpruntCol = new TableColumn<>("Date Emprunt");
-    auteurCol.setMinWidth(200);
-    auteurCol.setCellValueFactory(
-        new PropertyValueFactory<Emprunt, String>("dateEmprunt"));
+    TableColumn<EmpruntForHome, String> dateEmpruntCol = new TableColumn<>("Date Emprunt");
+    dateEmpruntCol.setMinWidth(200);
+    dateEmpruntCol.setCellValueFactory(
+        new PropertyValueFactory<>("dateEmprunt"));
 
-    TableColumn<Emprunt, String> dateRetourCol = new TableColumn<>("Date Retour");
-    auteurCol.setMinWidth(200);
-    auteurCol.setCellValueFactory(
-        new PropertyValueFactory<Emprunt, String>("dateRetour"));
+    TableColumn<EmpruntForHome, String> dateRetourCol = new TableColumn<>("Date Retour");
+    dateRetourCol.setMinWidth(200);
+    dateRetourCol.setCellValueFactory(
+        new PropertyValueFactory<>("dateRetour"));
 
-    FilteredList<Emprunt> flLivre = new FilteredList(emprunts, p -> true);// Pass the data to a filtered list
+    TableColumn<EmpruntForHome, String> emailCol = new TableColumn<>("Email");
+    emailCol.setMinWidth(200);
+    emailCol.setCellValueFactory(new PropertyValueFactory<>("email"));
+
+    FilteredList<EmpruntForHome> flLivre = new FilteredList(emprunts, p -> true);// Pass the data to a filtered list
     table.setItems(flLivre);// Set the table's items using the filtered list
-    table.getColumns().addAll(idCol, titreCol, auteurCol, isbnCol, dateEmpruntCol, dateRetourCol);
+    table.getColumns().addAll(idCol, titreCol, auteurCol, isbnCol, dateEmpruntCol, dateRetourCol, emailCol);
 
     // Adding ChoiceBox and TextField here!
     ChoiceBox<String> choiceBox = new ChoiceBox();
-    choiceBox.getItems().addAll("Id", "Titre", "Auteur", "Isbn", "Date Emprunt", "Date Retour");
+    choiceBox.getItems().addAll("Id", "Titre", "Auteur", "Isbn", "Date Emprunt", "Date Retour", "Email");
     choiceBox.setValue("Titre");
 
     TextField textField = new TextField();
@@ -130,23 +138,28 @@ public class HomeEmprunt extends App implements ManyFetcher {
       switch (choiceBox.getValue()) {
         case "Id":
           flLivre.setPredicate(
-              p -> Integer.toString(p.getId()).toLowerCase()
+              e -> Integer.toString(e.getId()).toLowerCase()
                   .contains(newValue.toLowerCase().trim()));
           break;
         case "Titre":
-          flLivre.setPredicate(p -> p.getTitre().toLowerCase().contains(newValue.toLowerCase().trim()));
+          flLivre.setPredicate(e -> e.getTitre().toLowerCase().contains(newValue.toLowerCase().trim()));
           break;
         case "Auteur":
-          flLivre.setPredicate(p -> p.getAuteur().toLowerCase().contains(newValue.toLowerCase().trim()));
+          flLivre.setPredicate(e -> e.getAuteur().toLowerCase().contains(newValue.toLowerCase().trim()));
           break;
         case "Isbn":
-          flLivre.setPredicate(p -> p.getIsbn().toLowerCase().contains(newValue.toLowerCase().trim()));
+          flLivre.setPredicate(e -> e.getIsbn().toLowerCase().contains(newValue.toLowerCase().trim()));
           break;
         case "Date Emprunt":
-          flLivre.setPredicate(p -> p.getIsbn().toLowerCase().contains(newValue.toLowerCase().trim()));
+          flLivre
+              .setPredicate(e -> e.getDateEmprunt().toString().toLowerCase().contains(newValue.toLowerCase().trim()));
           break;
         case "Date Retour":
-          flLivre.setPredicate(p -> p.getIsbn().toLowerCase().contains(newValue.toLowerCase().trim()));
+          flLivre.setPredicate(
+              e -> e.getDateRetour().toString().toLowerCase().contains(newValue.toLowerCase().trim()));
+          break;
+        case "Email":
+          flLivre.setPredicate(e -> e.getEmail().toLowerCase().contains(newValue.toLowerCase().trim()));
           break;
       }
     });
@@ -157,8 +170,8 @@ public class HomeEmprunt extends App implements ManyFetcher {
       }
     });
 
-    HBox hBox = new HBox(choiceBox, textField);// Add choiceBox and textField to hBox
-    hBox.setAlignment(Pos.CENTER);// Center HBox
+    HBox hBox = new HBox(choiceBox, textField);
+    hBox.setAlignment(Pos.CENTER);
     final VBox vbox = new VBox();
     vbox.setSpacing(5);
     vbox.setPadding(new Insets(10, 0, 0, 10));
