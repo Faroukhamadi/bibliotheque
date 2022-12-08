@@ -32,11 +32,36 @@ import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
-public class HomeLivre extends App implements HomeCRUD {
-    @Override
-    public void addOne(int id) {
-        // TODO Auto-generated method stub
+public class HomeLivre extends App implements HomeCRUD<Livre> {
+    private TableView<Livre> table = new TableView<>();
+    private final ObservableList<Livre> livres = FXCollections.observableArrayList();
 
+    @Override
+    public int addOne(Livre livre) {
+        Database db = new Database();
+        try {
+            db.connect();
+            Connection conn = db.getConn();
+            PreparedStatement statement = conn
+                    .prepareStatement("INSERT INTO livre (titre, auteur, isbn) VALUES (?, ?, ?)");
+            statement.setString(1, livre.getTitre());
+            statement.setString(2, livre.getAuteur());
+            statement.setString(3, livre.getIsbn());
+
+            statement.executeUpdate();
+
+            Statement statement2 = conn.createStatement();
+            ResultSet resultSet = statement2.executeQuery("SELECT MAX(id_livre) FROM livre");
+            int id = 0;
+            while (resultSet.next()) {
+                id = resultSet.getInt("MAX(id_livre)");
+            }
+            return id;
+        } catch (SQLException e) {
+            System.err.println("Error while inserting a new book");
+            e.printStackTrace();
+            return -1;
+        }
     }
 
     @Override
@@ -46,12 +71,16 @@ public class HomeLivre extends App implements HomeCRUD {
             db.connect();
             Connection conn = db.getConn();
             PreparedStatement statement = conn.prepareStatement("DELETE FROM livre WHERE id_livre = ?");
+            PreparedStatement statement2 = conn.prepareStatement("DELETE FROM emprunt WHERE livre_id = ?");
+            statement2.setInt(1, id);
             statement.setInt(1, id);
+            statement2.executeUpdate();
             int rowsDeleted = statement.executeUpdate();
+
             if (rowsDeleted > 0) {
-                System.out.println("A user was deleted successfully!");
+                System.out.println("A book was deleted successfully!");
             } else {
-                System.out.println("No user was deleted.");
+                System.out.println("A book was not deleted successfully!");
             }
 
         } catch (SQLException e) {
@@ -62,13 +91,30 @@ public class HomeLivre extends App implements HomeCRUD {
     }
 
     @Override
-    public void updateOne(int id) {
-        // TODO Auto-generated method stub
+    public void updateOne(Livre livre) {
+        Database db = new Database();
+        try {
+            db.connect();
+            Connection conn = db.getConn();
+            PreparedStatement statement = conn.prepareStatement(
+                    "UPDATE livre SET titre = ?, auteur = ?, isbn = ? WHERE id_livre = ?");
+            statement.setString(1, livre.getTitre());
+            statement.setString(2, livre.getAuteur());
+            statement.setString(3, livre.getIsbn());
+            statement.setInt(4, livre.getId());
 
+            int rowsUpdated = statement.executeUpdate();
+            if (rowsUpdated > 0) {
+                System.out.println("An existing book was updated successfully!");
+            } else {
+                System.out.println("An existing book was not updated successfully!");
+            }
+
+        } catch (SQLException e) {
+            System.err.println("Error while updating a book");
+            e.printStackTrace();
+        }
     }
-
-    private TableView<Livre> table = new TableView<>();
-    private final ObservableList<Livre> livres = FXCollections.observableArrayList();
 
     @Override
     public void fetchAll() {
@@ -129,14 +175,15 @@ public class HomeLivre extends App implements HomeCRUD {
                 new PropertyValueFactory<Livre, String>("auteur"));
 
         TableColumn<Livre, String> isbnCol = new TableColumn<>("Isbn");
-        auteurCol.setMinWidth(200);
-        auteurCol.setCellValueFactory(
+        isbnCol.setMinWidth(200);
+        isbnCol.setCellValueFactory(
                 new PropertyValueFactory<Livre, String>("isbn"));
 
-        FilteredList<Livre> flLivre = new FilteredList(livres, p -> true);// Pass the data to a filtered list
+        FilteredList<Livre> flLivre = new FilteredList(livres, p -> true);
+
         table.setItems(flLivre);// Set the table's items using the filtered list
         table.getColumns().addAll(idCol, titreCol, auteurCol, isbnCol);
-        // Adding ChoiceBox and TextField here!
+
         ChoiceBox<String> choiceBox = new ChoiceBox();
         choiceBox.getItems().addAll("Id", "Titre", "Auteur", "Isbn");
         choiceBox.setValue("Titre");
@@ -168,7 +215,6 @@ public class HomeLivre extends App implements HomeCRUD {
 
         deleteButton.setDisable(true);
         editButton.setDisable(true);
-        addButton.setDisable(true);
 
         choiceBox.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {// reset table and
             if (newVal != null) {
@@ -176,21 +222,75 @@ public class HomeLivre extends App implements HomeCRUD {
             }
         });
         addButton.setOnAction(e -> {
-            System.out.println(table.getSelectionModel().getSelectedItem());
-            // AddLivre addLivre = new AddLivre(stage);
-            // stage.setScene(addLivre.getScene());
+            Stage dialog = new Stage();
+
+            dialog.initModality(Modality.APPLICATION_MODAL);
+            dialog.setTitle("Add a book");
+            dialog.setMinWidth(400);
+            dialog.setMinHeight(400);
+            Label label1 = new Label("Titre");
+            TextField textField1 = new TextField();
+            Label label2 = new Label("Auteur");
+            TextField textField2 = new TextField();
+            Label label3 = new Label("Isbn");
+            TextField textField3 = new TextField();
+            Button button = new Button("Add");
+            VBox vBox = new VBox(label1, textField1, label2, textField2, label3, textField3, button);
+
+            Scene myDialogScene = new Scene(vBox);
+
+            button.setOnAction(e1 -> {
+
+                Livre livre = new Livre(textField1.getText(), textField2.getText(),
+                        textField3.getText());
+
+                int id = addOne(livre);
+                livre.setId(id);
+
+                livres.add(livre);
+                dialog.close();
+            });
+
+            dialog.setScene(myDialogScene);
+            dialog.show();
+
         });
 
         editButton.setOnAction(e -> {
-            System.out.println(table.getSelectionModel().getSelectedItem());
-            // EditLivre editLivre = new EditLivre(stage,
-            // table.getSelectionModel().getSelectedItem());
-            // stage.setScene(editLivre.getScene());
+            Stage dialog = new Stage();
+
+            dialog.initModality(Modality.APPLICATION_MODAL);
+            dialog.setTitle("Edit a book");
+            dialog.setMinWidth(400);
+            dialog.setMinHeight(400);
+            Label label1 = new Label("Titre");
+            TextField textField1 = new TextField(table.getSelectionModel().getSelectedItem().getTitre());
+            Label label2 = new Label("Auteur");
+            TextField textField2 = new TextField(table.getSelectionModel().getSelectedItem().getAuteur());
+            Label label3 = new Label("Isbn");
+            TextField textField3 = new TextField(table.getSelectionModel().getSelectedItem().getIsbn());
+            Button button = new Button("Edit");
+            VBox vBox = new VBox(label1, textField1, label2, textField2, label3, textField3, button);
+
+            Scene myDialogScene = new Scene(vBox);
+
+            button.setOnAction(e1 -> {
+                Livre livre = new Livre(table.getSelectionModel().getSelectedItem().getId(), textField1.getText(),
+                        textField2.getText(),
+                        textField3.getText());
+
+                updateOne(livre);
+
+                livres.set(livres.indexOf(table.getSelectionModel().getSelectedItem()), livre);
+                dialog.close();
+            });
+
+            dialog.setScene(myDialogScene);
+            dialog.show();
+
         });
 
         deleteButton.setOnAction(e -> {
-            System.out.println(table.getSelectionModel().getSelectedItem());
-
             Stage dialog = new Stage();
 
             dialog.initModality(Modality.APPLICATION_MODAL);
@@ -211,6 +311,7 @@ public class HomeLivre extends App implements HomeCRUD {
             yesButton.setOnAction(e1 -> {
                 Livre livre = table.getSelectionModel().getSelectedItem();
                 deleteOne(livre.getId());
+                livres.remove(livre);
                 dialog.close();
             });
 
@@ -222,12 +323,16 @@ public class HomeLivre extends App implements HomeCRUD {
             dialog.show();
 
         });
+
         // disable button if no row is selected and enable if a row is selected
-        table.getSelectionModel().selectedItemProperty().addListener((obs,
-                oldSelection, newSelection) -> {
-            addButton.setDisable(false);
-            editButton.setDisable(false);
-            deleteButton.setDisable(false);
+        table.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
+            if (newSelection != null) {
+                editButton.setDisable(false);
+                deleteButton.setDisable(false);
+            } else {
+                editButton.setDisable(true);
+                deleteButton.setDisable(true);
+            }
         });
 
         HBox hBox = new HBox(choiceBox, textField);// Add choiceBox and textField to hBox

@@ -15,6 +15,12 @@ public class Livre {
     this.isbn.setValue(isbn);
   }
 
+  public Livre(String titre, String auteur, String isbn) {
+    this.titre.setValue(titre);
+    this.auteur.setValue(auteur);
+    this.isbn.setValue(isbn);
+  }
+
   public int getId() {
     return id;
   }

@@ -31,9 +31,9 @@ import javafx.stage.Stage;
 
 public class HomeUsager extends App implements HomeCRUD {
   @Override
-  public void addOne(int id) {
+  public int addOne() {
     // TODO Auto-generated method stub
-
+    return 0;
   }
 
   @Override

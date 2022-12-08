@@ -1,11 +1,11 @@
 package org.farouk_maram.interfaces;
 
-public interface HomeCRUD {
+public interface HomeCRUD<T> {
   public void fetchAll();
 
-  public void addOne(int id);
+  public int addOne(T t);
 
-  public void updateOne(int id);
+  public void updateOne(T t);
 
   public void deleteOne(int id);
 

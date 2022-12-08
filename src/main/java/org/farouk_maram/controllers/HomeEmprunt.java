@@ -32,9 +32,9 @@ import javafx.stage.Stage;
 // change select query to sort by date
 public class HomeEmprunt extends App implements HomeCRUD {
   @Override
-  public void addOne(int id) {
+  public int addOne() {
     // TODO Auto-generated method stub
-
+    return 0;
   }
 
   @Override
