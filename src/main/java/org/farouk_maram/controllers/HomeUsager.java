@@ -40,14 +40,13 @@ public class HomeUsager extends App implements ManyFetcher {
       db.connect();
       Connection conn = db.getConn();
       Statement statement = conn.createStatement();
-      ResultSet resultSet = statement.executeQuery("SELECT * FROM livre");
+      ResultSet resultSet = statement.executeQuery("SELECT * FROM usager");
       while (resultSet.next()) {
         int id = resultSet.getInt("id_usager");
         String nom = resultSet.getString("nom");
         String prenom = resultSet.getString("prenom");
         String email = resultSet.getString("email");
-        String statut = (resultSet.getString("statut"));
-        System.out.println("status = " + statut);
+        String statut = resultSet.getString("statut").toUpperCase();
         Usager usager = new Usager(id, nom, prenom, email, Statut.valueOf(statut));
 
         usagers.add(usager);
@@ -95,13 +94,13 @@ public class HomeUsager extends App implements ManyFetcher {
         new PropertyValueFactory<Usager, String>("prenom"));
 
     TableColumn<Usager, String> statutCol = new TableColumn<>("Statut");
-    prenomCol.setMinWidth(200);
-    prenomCol.setCellValueFactory(
-        new PropertyValueFactory<Usager, String>("status"));
+    statutCol.setMinWidth(200);
+    statutCol.setCellValueFactory(
+        new PropertyValueFactory<Usager, String>("statut"));
 
     TableColumn<Usager, String> emailCol = new TableColumn<>("Email");
-    prenomCol.setMinWidth(200);
-    prenomCol.setCellValueFactory(
+    emailCol.setMinWidth(200);
+    emailCol.setCellValueFactory(
         new PropertyValueFactory<Usager, String>("email"));
 
     FilteredList<Usager> lvUsager = new FilteredList(usagers, p -> true);// Pass the data to a filtered list
@@ -137,14 +136,15 @@ public class HomeUsager extends App implements ManyFetcher {
       }
     });
 
-    choiceBox.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {// reset table and
+    // reset textfield when choicebox is changed
+    choiceBox.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
       if (newVal != null) {
         textField.setText("");
       }
     });
 
-    HBox hBox = new HBox(choiceBox, textField);// Add choiceBox and textField to hBox
-    hBox.setAlignment(Pos.CENTER);// Center HBox
+    HBox hBox = new HBox(choiceBox, textField);
+    hBox.setAlignment(Pos.CENTER);
     final VBox vbox = new VBox();
     vbox.setSpacing(5);
     vbox.setPadding(new Insets(10, 0, 0, 10));

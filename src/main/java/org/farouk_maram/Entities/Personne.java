@@ -3,8 +3,8 @@ package org.farouk_maram.Entities;
 import javafx.beans.property.SimpleStringProperty;
 
 public abstract class Personne {
-  private SimpleStringProperty nom;
-  private SimpleStringProperty prenom;
+  private SimpleStringProperty nom = new SimpleStringProperty();
+  private SimpleStringProperty prenom = new SimpleStringProperty();
 
   public Personne(String nom, String prenom) {
     this.nom.setValue(prenom);

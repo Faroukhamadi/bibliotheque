@@ -8,7 +8,7 @@ import javafx.beans.property.SimpleStringProperty;
 
 public class Usager extends Personne {
   private int id;
-  private SimpleStringProperty email;
+  private SimpleStringProperty email = new SimpleStringProperty();
   private Statut statut;
   private ArrayList<Emprunt> emprunts = new ArrayList<Emprunt>();
 

@@ -1,0 +1,1 @@
+& mvn javafx:run -f "c:\Users\farou\programming\bibliotheque\pom.xml"
