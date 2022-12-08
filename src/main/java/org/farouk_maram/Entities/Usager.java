@@ -19,6 +19,19 @@ public class Usager extends Personne {
     this.statut = statut;
   }
 
+  public Usager(int id, String nom, String prenom, String email, String statut) {
+    super(nom, prenom);
+    this.id = id;
+    this.email.setValue(email);
+    this.statut = Statut.valueOf(statut);
+  }
+
+  public Usager(String nom, String prenom, String email, Statut statut) {
+    super(nom, prenom);
+    this.email.setValue(email);
+    this.statut = statut;
+  }
+
   public Usager(int id, String email) {
     super(null, null);
     this.statut = null;

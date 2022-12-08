@@ -7,8 +7,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 import org.farouk_maram.Authentication.Authenticate;
-import org.farouk_maram.controllers.HomeEmprunt;
-import org.farouk_maram.controllers.HomeLivre;
 import org.farouk_maram.controllers.HomeUsager;
 import org.farouk_maram.controllers.Login;
 import org.farouk_maram.db.Database;

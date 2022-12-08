@@ -179,12 +179,12 @@ public class HomeLivre extends App implements HomeCRUD<Livre> {
         isbnCol.setCellValueFactory(
                 new PropertyValueFactory<Livre, String>("isbn"));
 
-        FilteredList<Livre> flLivre = new FilteredList(livres, p -> true);
+        FilteredList<Livre> flLivre = new FilteredList<>(livres, p -> true);
 
         table.setItems(flLivre);// Set the table's items using the filtered list
         table.getColumns().addAll(idCol, titreCol, auteurCol, isbnCol);
 
-        ChoiceBox<String> choiceBox = new ChoiceBox();
+        ChoiceBox<String> choiceBox = new ChoiceBox<>();
         choiceBox.getItems().addAll("Id", "Titre", "Auteur", "Isbn");
         choiceBox.setValue("Titre");
 
@@ -213,14 +213,15 @@ public class HomeLivre extends App implements HomeCRUD<Livre> {
         Button editButton = new Button("Edit");
         Button addButton = new Button("Add");
 
-        deleteButton.setDisable(true);
         editButton.setDisable(true);
+        deleteButton.setDisable(true);
 
         choiceBox.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {// reset table and
             if (newVal != null) {
                 textField.setText("");
             }
         });
+
         addButton.setOnAction(e -> {
             Stage dialog = new Stage();
 

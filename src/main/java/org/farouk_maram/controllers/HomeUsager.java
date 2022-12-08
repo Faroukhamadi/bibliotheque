@@ -18,6 +18,7 @@ import javafx.collections.transformation.FilteredList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
@@ -28,6 +29,8 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
+import javafx.scene.text.Text;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 public class HomeUsager extends App implements HomeCRUD<Usager> {
@@ -93,7 +96,7 @@ public class HomeUsager extends App implements HomeCRUD<Usager> {
       db.connect();
       Connection conn = db.getConn();
       PreparedStatement statement = conn.prepareStatement(
-          "UPDATE usager SET nom = ?, prenom = ?, email = ?, status = ? WHERE id_usager = ?");
+          "UPDATE usager SET nom = ?, prenom = ?, email = ?, statut = ? WHERE id_usager = ?");
       statement.setString(1, usager.getNom());
       statement.setString(2, usager.getPrenom());
       statement.setString(3, usager.getEmail());
@@ -129,7 +132,7 @@ public class HomeUsager extends App implements HomeCRUD<Usager> {
         String nom = resultSet.getString("nom");
         String prenom = resultSet.getString("prenom");
         String email = resultSet.getString("email");
-        String statut = resultSet.getString("statut").toUpperCase();
+        String statut = resultSet.getString("statut");
         Usager usager = new Usager(id, nom, prenom, email, Statut.valueOf(statut));
 
         usagers.add(usager);
@@ -186,12 +189,11 @@ public class HomeUsager extends App implements HomeCRUD<Usager> {
     emailCol.setCellValueFactory(
         new PropertyValueFactory<Usager, String>("email"));
 
-    FilteredList<Usager> lvUsager = new FilteredList(usagers, p -> true);// Pass the data to a filtered list
+    FilteredList<Usager> lvUsager = new FilteredList<>(usagers, p -> true);// Pass the data to a filtered list
     table.setItems(lvUsager);// Set the table's items using the filtered list
     table.getColumns().addAll(idCol, nomCol, prenomCol, statutCol, emailCol);
 
-    // Adding ChoiceBox and TextField here!
-    ChoiceBox<String> choiceBox = new ChoiceBox();
+    ChoiceBox<String> choiceBox = new ChoiceBox<>();
     choiceBox.getItems().addAll("Id", "Prenom", "Statut", "Email");
     choiceBox.setValue("Prenom");
 
@@ -219,6 +221,135 @@ public class HomeUsager extends App implements HomeCRUD<Usager> {
       }
     });
 
+    Button deleteButton = new Button("Delete");
+    Button editButton = new Button("Edit");
+    Button addButton = new Button("Add");
+
+    editButton.setDisable(true);
+    deleteButton.setDisable(true);
+
+    addButton.setOnAction(e -> {
+      Stage dialog = new Stage();
+
+      dialog.initModality(Modality.APPLICATION_MODAL);
+      dialog.setTitle("Add a book");
+      dialog.setMinWidth(400);
+      dialog.setMinHeight(400);
+      Label label1 = new Label("Nom");
+      TextField textField1 = new TextField();
+      Label label2 = new Label("Prenom");
+      TextField textField2 = new TextField();
+      Label label3 = new Label("Email");
+      TextField textField3 = new TextField();
+      Label label4 = new Label("Statut");
+      TextField textField4 = new TextField();
+
+      Button button = new Button("Add");
+      VBox vBox = new VBox(label1, textField1, label2, textField2, label3, textField3, label4, textField4, button);
+
+      Scene myDialogScene = new Scene(vBox);
+
+      button.setOnAction(e1 -> {
+
+        Usager usager = new Usager(textField1.getText(), textField2.getText(), textField3.getText(),
+            Statut.valueOf(textField4.getText()));
+
+        int id = addOne(usager);
+        usager.setId(id);
+
+        usagers.add(usager);
+        dialog.close();
+      });
+
+      dialog.setScene(myDialogScene);
+      dialog.show();
+
+    });
+
+    editButton.setOnAction(e -> {
+      Stage dialog = new Stage();
+
+      dialog.initModality(Modality.APPLICATION_MODAL);
+      dialog.setTitle("Edit a book");
+      dialog.setMinWidth(400);
+      dialog.setMinHeight(400);
+      Label label1 = new Label("Nom");
+      TextField textField1 = new TextField(table.getSelectionModel().getSelectedItem().getNom());
+      Label label2 = new Label("Prenom");
+      TextField textField2 = new TextField(table.getSelectionModel().getSelectedItem().getPrenom());
+      Label label3 = new Label("Email");
+      TextField textField3 = new TextField(table.getSelectionModel().getSelectedItem().getEmail());
+      Label label4 = new Label("Statut");
+      ChoiceBox<String> statuts = new ChoiceBox<>();
+      Button button = new Button("Edit");
+      statuts.getItems().addAll("etudiant", "enseignant");
+      statuts.setValue(table.getSelectionModel().getSelectedItem().getStatut().toString());
+
+      VBox vBox = new VBox(label1, textField1, label2, textField2, label3, textField3, label4, statuts, button);
+
+      Scene myDialogScene = new Scene(vBox);
+
+      button.setOnAction(e1 -> {
+        Usager usager = new Usager(table.getSelectionModel().getSelectedItem().getId(), textField1.getText(),
+            textField2.getText(),
+            textField3.getText(), Statut.valueOf(statuts.getValue()));
+
+        updateOne(usager);
+
+        usagers.set(usagers.indexOf(table.getSelectionModel().getSelectedItem()), usager);
+        dialog.close();
+      });
+
+      dialog.setScene(myDialogScene);
+      dialog.show();
+
+    });
+
+    deleteButton.setOnAction(e -> {
+      Stage dialog = new Stage();
+
+      dialog.initModality(Modality.APPLICATION_MODAL);
+
+      Text text = new Text("Are you sure you want to delete this usager?");
+      text.setFont(new Font("Arial", 20));
+      Button yesButton = new Button("Yes");
+      Button noButton = new Button("No");
+      HBox hBox = new HBox(yesButton, noButton);
+      hBox.setSpacing(30);
+      hBox.setAlignment(Pos.CENTER);
+      VBox vBox = new VBox(text, hBox);
+      vBox.setSpacing(30);
+      vBox.setAlignment(Pos.CENTER);
+      vBox.setPadding(new Insets(10));
+      Scene myDialogScene = new Scene(vBox);
+
+      yesButton.setOnAction(e1 -> {
+        Usager usager = table.getSelectionModel().getSelectedItem();
+        deleteOne(usager.getId());
+        usagers.remove(usager);
+        dialog.close();
+      });
+
+      noButton.setOnAction(e1 -> {
+        dialog.close();
+      });
+
+      dialog.setScene(myDialogScene);
+      dialog.show();
+
+    });
+
+    // disable button if no row is selected and enable if a row is selected
+    table.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
+      if (newSelection != null) {
+        editButton.setDisable(false);
+        deleteButton.setDisable(false);
+      } else {
+        editButton.setDisable(true);
+        deleteButton.setDisable(true);
+      }
+    });
+
     // reset textfield when choicebox is changed
     choiceBox.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
       if (newVal != null) {
@@ -231,7 +362,7 @@ public class HomeUsager extends App implements HomeCRUD<Usager> {
     final VBox vbox = new VBox();
     vbox.setSpacing(5);
     vbox.setPadding(new Insets(10, 0, 0, 10));
-    vbox.getChildren().addAll(label, table, hBox);
+    vbox.getChildren().addAll(label, table, hBox, addButton, editButton, deleteButton);
 
     StackPane root = (StackPane) scene.getRoot();
     root.getChildren().addAll(vbox);
