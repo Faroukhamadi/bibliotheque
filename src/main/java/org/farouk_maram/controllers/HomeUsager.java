@@ -9,7 +9,7 @@ import org.farouk_maram.App;
 import org.farouk_maram.Statut;
 import org.farouk_maram.Entities.Usager;
 import org.farouk_maram.db.Database;
-import org.farouk_maram.interfaces.ManyFetcher;
+import org.farouk_maram.interfaces.HomeCRUD;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -29,7 +29,25 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
-public class HomeUsager extends App implements ManyFetcher {
+public class HomeUsager extends App implements HomeCRUD {
+  @Override
+  public void addOne(int id) {
+    // TODO Auto-generated method stub
+
+  }
+
+  @Override
+  public void deleteOne(int id) {
+    // TODO Auto-generated method stub
+
+  }
+
+  @Override
+  public void updateOne(int id) {
+    // TODO Auto-generated method stub
+
+  }
+
   private TableView<Usager> table = new TableView<>();
   private final ObservableList<Usager> usagers = FXCollections.observableArrayList();
 
