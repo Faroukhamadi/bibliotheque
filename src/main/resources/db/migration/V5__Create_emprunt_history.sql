@@ -7,7 +7,7 @@ create table emprunt_history (
   primary key (id_emprunt)
 );
 
-CREATE TRIGGER emprunt_change_trigger BEFORE
+CREATE TRIGGER emprunt_add_trigger BEFORE
 INSERT
   ON emprunt FOR EACH ROW
 INSERT INTO
@@ -19,3 +19,17 @@ VALUES
     NEW.livre_id,
     NEW.usager_id
   );
+
+CREATE TRIGGER emprunt_change_trigger
+AFTER
+UPDATE
+  ON emprunt FOR EACH ROW
+update
+  emprunt_history
+set
+  date_emprunt = NEW.date_emprunt,
+  date_retour = NEW.date_retour,
+  livre_id = NEW.livre_id,
+  usager_id = NEW.usager_id
+where
+  id_emprunt = OLD.id_emprunt;

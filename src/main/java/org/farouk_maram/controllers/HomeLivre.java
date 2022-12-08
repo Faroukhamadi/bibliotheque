@@ -336,8 +336,8 @@ public class HomeLivre extends App implements HomeCRUD<Livre> {
             }
         });
 
-        HBox hBox = new HBox(choiceBox, textField);// Add choiceBox and textField to hBox
-        hBox.setAlignment(Pos.CENTER);// Center HBox
+        HBox hBox = new HBox(choiceBox, textField);
+        hBox.setAlignment(Pos.CENTER);
         final VBox vbox = new VBox();
         vbox.setSpacing(5);
         vbox.setPadding(new Insets(10, 0, 0, 10));

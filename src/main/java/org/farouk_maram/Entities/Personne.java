@@ -7,7 +7,7 @@ public abstract class Personne {
   private SimpleStringProperty prenom = new SimpleStringProperty();
 
   public Personne(String nom, String prenom) {
-    this.nom.setValue(prenom);
+    this.nom.setValue(nom);
     this.prenom.setValue(prenom);
   }
 

@@ -2,12 +2,15 @@ package org.farouk_maram.controllers;
 
 import java.sql.Connection;
 import java.sql.Date;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
 import org.farouk_maram.App;
+import org.farouk_maram.Entities.Emprunt;
 import org.farouk_maram.Entities.EmpruntForHome;
+import org.farouk_maram.Entities.Livre;
 import org.farouk_maram.db.Database;
 import org.farouk_maram.interfaces.HomeCRUD;
 
@@ -17,6 +20,7 @@ import javafx.collections.transformation.FilteredList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
@@ -27,13 +31,43 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
+import javafx.scene.text.Text;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 // change select query to sort by date
-public class HomeEmprunt extends App implements HomeCRUD<EmpruntForHome> {
+public class HomeEmprunt extends App implements HomeCRUD<Emprunt> {
   @Override
-  public int addOne(EmpruntForHome empruntForHome) {
-    return 0;
+  public int addOne(Emprunt emprunt) {
+    Database db = new Database();
+    try {
+      db.connect();
+      Connection conn = db.getConn();
+      PreparedStatement statement = conn
+          .prepareStatement("INSERT INTO emprunt (date_emprunt, date_retour, livre_id, usager_id) VALUES (?, ?, ?, ?)");
+      statement.setDate(1, emprunt.getDateEmprunt());
+      if (emprunt.getDateRetour() == null) {
+        statement.setDate(2, null);
+      } else {
+        statement.setDate(2, emprunt.getDateRetour());
+      }
+      statement.setInt(3, emprunt.getLivre().getId());
+      statement.setInt(4, emprunt.getUsager().getId());
+
+      statement.executeUpdate();
+
+      Statement statement2 = conn.createStatement();
+      ResultSet resultSet = statement2.executeQuery("SELECT MAX(id_livre) FROM livre");
+      int id = 0;
+      while (resultSet.next()) {
+        id = resultSet.getInt("MAX(id_livre)");
+      }
+      return id;
+    } catch (SQLException e) {
+      System.err.println("Error while inserting a new book");
+      e.printStackTrace();
+      return -1;
+    }
   }
 
   @Override
@@ -41,7 +75,27 @@ public class HomeEmprunt extends App implements HomeCRUD<EmpruntForHome> {
   }
 
   @Override
-  public void updateOne(EmpruntForHome empruntForHome) {
+  // rendre livre => update date_retour
+  public void updateOne(Emprunt emprunt) {
+    Database db = new Database();
+    try {
+      db.connect();
+      Connection conn = db.getConn();
+      PreparedStatement statement = conn.prepareStatement(
+          "UPDATE emprunt SET date_retour = NOW() WHERE id_livre = ?");
+      statement.setInt(1, emprunt.getLivre().getId());
+
+      int rowsUpdated = statement.executeUpdate();
+      if (rowsUpdated > 0) {
+        System.out.println("An existing book was updated successfully!");
+      } else {
+        System.out.println("An existing book was not updated successfully!");
+      }
+
+    } catch (SQLException e) {
+      System.err.println("Error while updating a book");
+      e.printStackTrace();
+    }
   }
 
   private TableView<EmpruntForHome> table = new TableView<>();
@@ -176,6 +230,128 @@ public class HomeEmprunt extends App implements HomeCRUD<EmpruntForHome> {
       }
     });
 
+    Button deleteButton = new Button("Delete");
+    Button rendreButton = new Button("Rendre");
+    Button addButton = new Button("Add");
+
+    rendreButton.setDisable(true);
+    deleteButton.setDisable(true);
+
+    addButton.setOnAction(e -> {
+      Stage dialog = new Stage();
+
+      dialog.initModality(Modality.APPLICATION_MODAL);
+      dialog.setTitle("Add a book");
+      dialog.setMinWidth(400);
+      dialog.setMinHeight(400);
+      Label label1 = new Label("Titre");
+      TextField textField1 = new TextField();
+      Label label2 = new Label("Auteur");
+      TextField textField2 = new TextField();
+      Label label3 = new Label("Isbn");
+      TextField textField3 = new TextField();
+      Button button = new Button("Add");
+      VBox vBox = new VBox(label1, textField1, label2, textField2, label3,
+          textField3, button);
+
+      Scene myDialogScene = new Scene(vBox);
+
+      button.setOnAction(e1 -> {
+
+        Emprunt emprunt = new Emprunt(textField1.getText(), textField2.getText(),
+            textField3.getText());
+
+        int id = addOne(emprunt);
+        emprunt.setId(id);
+
+        emprunts.add(emprunt);
+        dialog.close();
+      });
+
+      dialog.setScene(myDialogScene);
+      dialog.show();
+
+    });
+
+    rendreButton.setOnAction(e -> {
+      Stage dialog = new Stage();
+
+      dialog.initModality(Modality.APPLICATION_MODAL);
+      dialog.setTitle("Rendre un livre");
+      dialog.setMinWidth(400);
+      dialog.setMinHeight(400);
+      Label label1 = new Label("Titre");
+      TextField textField1 = new TextField(table.getSelectionModel().getSelectedItem().getTitre());
+      Label label2 = new Label("Auteur");
+      TextField textField2 = new TextField(table.getSelectionModel().getSelectedItem().getAuteur());
+      Label label3 = new Label("Isbn");
+      TextField textField3 = new TextField(table.getSelectionModel().getSelectedItem().getIsbn());
+      Button button = new Button("Edit");
+      VBox vBox = new VBox(label1, textField1, label2, textField2, label3, textField3, button);
+
+      Scene myDialogScene = new Scene(vBox);
+
+      button.setOnAction(e1 -> {
+        Emprunt emprunt = new Emprunt(table.getSelectionModel().getSelectedItem().getId(), textField1.getText(),
+            textField2.getText(),
+            textField3.getText());
+
+        updateOne(emprunt);
+
+        emprunts.set(emprunts.indexOf(table.getSelectionModel().getSelectedItem()), emprunt);
+        dialog.close();
+      });
+
+      dialog.setScene(myDialogScene);
+      dialog.show();
+
+    });
+
+    deleteButton.setOnAction(e -> {
+      Stage dialog = new Stage();
+
+      dialog.initModality(Modality.APPLICATION_MODAL);
+
+      Text text = new Text("Are you sure you want to delete this emprunt?");
+      text.setFont(new Font("Arial", 20));
+      Button yesButton = new Button("Yes");
+      Button noButton = new Button("No");
+      HBox hBox = new HBox(yesButton, noButton);
+      hBox.setSpacing(30);
+      hBox.setAlignment(Pos.CENTER);
+      VBox vBox = new VBox(text, hBox);
+      vBox.setSpacing(30);
+      vBox.setAlignment(Pos.CENTER);
+      vBox.setPadding(new Insets(10));
+      Scene myDialogScene = new Scene(vBox);
+
+      yesButton.setOnAction(e1 -> {
+        // Livre livre = table.getSelectionModel().getSelectedItem();
+        // deleteOne(livre.getId());
+        // livres.remove(livre);
+        dialog.close();
+      });
+
+      noButton.setOnAction(e1 -> {
+        dialog.close();
+      });
+
+      dialog.setScene(myDialogScene);
+      dialog.show();
+
+    });
+
+    // disable button if no row is selected and enable if a row is selected
+    table.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
+      if (newSelection != null) {
+        rendreButton.setDisable(false);
+        deleteButton.setDisable(false);
+      } else {
+        rendreButton.setDisable(true);
+        deleteButton.setDisable(true);
+      }
+    });
+
     choiceBox.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {// reset table and
       if (newVal != null) {
         textField.setText("");
@@ -187,7 +363,7 @@ public class HomeEmprunt extends App implements HomeCRUD<EmpruntForHome> {
     final VBox vbox = new VBox();
     vbox.setSpacing(5);
     vbox.setPadding(new Insets(10, 0, 0, 10));
-    vbox.getChildren().addAll(label, table, hBox);
+    vbox.getChildren().addAll(label, table, hBox, addButton, rendreButton, deleteButton);
 
     StackPane root = (StackPane) scene.getRoot();
     root.getChildren().addAll(vbox);

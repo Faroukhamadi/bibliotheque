@@ -44,7 +44,7 @@ public class HomeUsager extends App implements HomeCRUD<Usager> {
       db.connect();
       Connection conn = db.getConn();
       PreparedStatement statement = conn
-          .prepareStatement("INSERT INTO usager (nom, prenom, status, email) VALUES (?, ?, ?, ?)");
+          .prepareStatement("INSERT INTO usager (nom, prenom, statut, email) VALUES (?, ?, ?, ?)");
       statement.setString(1, usager.getNom());
       statement.setString(2, usager.getPrenom());
       statement.setString(3, usager.getStatut().toString());
@@ -134,8 +134,13 @@ public class HomeUsager extends App implements HomeCRUD<Usager> {
         String email = resultSet.getString("email");
         String statut = resultSet.getString("statut");
         Usager usager = new Usager(id, nom, prenom, email, Statut.valueOf(statut));
-
+        System.out.println("BEFORE");
+        System.out.println("prenom: " + prenom);
+        System.out.println("nom: " + nom);
         usagers.add(usager);
+        System.out.println("prenom: " + usager.getPrenom());
+        System.out.println("nom: " + usager.getNom());
+        System.out.println("AFTER");
       }
 
     } catch (SQLException e) {
