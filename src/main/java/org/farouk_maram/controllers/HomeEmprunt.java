@@ -123,12 +123,11 @@ public class HomeEmprunt extends App implements ManyFetcher {
     emailCol.setMinWidth(200);
     emailCol.setCellValueFactory(new PropertyValueFactory<>("email"));
 
-    FilteredList<EmpruntForHome> flLivre = new FilteredList(emprunts, p -> true);// Pass the data to a filtered list
+    FilteredList<EmpruntForHome> flLivre = new FilteredList<>(emprunts, p -> true);// Pass the data to a filtered list
     table.setItems(flLivre);// Set the table's items using the filtered list
     table.getColumns().addAll(idCol, titreCol, auteurCol, isbnCol, dateEmpruntCol, dateRetourCol, emailCol);
 
-    // Adding ChoiceBox and TextField here!
-    ChoiceBox<String> choiceBox = new ChoiceBox();
+    ChoiceBox<String> choiceBox = new ChoiceBox<>();
     choiceBox.getItems().addAll("Id", "Titre", "Auteur", "Isbn", "Date Emprunt", "Date Retour", "Email");
     choiceBox.setValue("Titre");
 

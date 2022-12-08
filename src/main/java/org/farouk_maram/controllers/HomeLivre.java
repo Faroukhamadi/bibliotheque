@@ -16,6 +16,7 @@ import javafx.collections.transformation.FilteredList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
@@ -129,6 +130,29 @@ public class HomeLivre extends App implements ManyFetcher {
             if (newVal != null) {
                 textField.setText("");
             }
+        });
+
+        Button button = new Button("Add");
+        button.setOnAction(e -> {
+            System.out.println(table.getSelectionModel().getSelectedItem());
+            // AddLivre addLivre = new AddLivre(stage);
+            // stage.setScene(addLivre.getScene());
+        });
+
+        Button button2 = new Button("Edit");
+        button2.setOnAction(e -> {
+            System.out.println(table.getSelectionModel().getSelectedItem());
+            // EditLivre editLivre = new EditLivre(stage,
+            // table.getSelectionModel().getSelectedItem());
+            // stage.setScene(editLivre.getScene());
+        });
+
+        Button button3 = new Button("Delete");
+        button3.setOnAction(e -> {
+            System.out.println(table.getSelectionModel().getSelectedItem());
+            // DeleteLivre deleteLivre = new DeleteLivre(stage,
+            // table.getSelectionModel().getSelectedItem());
+            // stage.setScene(deleteLivre.getScene());
         });
 
         HBox hBox = new HBox(choiceBox, textField);// Add choiceBox and textField to hBox
