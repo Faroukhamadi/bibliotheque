@@ -30,23 +30,18 @@ import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
 // change select query to sort by date
-public class HomeEmprunt extends App implements HomeCRUD {
+public class HomeEmprunt extends App implements HomeCRUD<EmpruntForHome> {
   @Override
-  public int addOne() {
-    // TODO Auto-generated method stub
+  public int addOne(EmpruntForHome empruntForHome) {
     return 0;
   }
 
   @Override
   public void deleteOne(int id) {
-    // TODO Auto-generated method stub
-
   }
 
   @Override
-  public void updateOne(int id) {
-    // TODO Auto-generated method stub
-
+  public void updateOne(EmpruntForHome empruntForHome) {
   }
 
   private TableView<EmpruntForHome> table = new TableView<>();

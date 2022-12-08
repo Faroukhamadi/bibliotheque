@@ -1,6 +1,7 @@
 package org.farouk_maram.controllers;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -29,23 +30,87 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
-public class HomeUsager extends App implements HomeCRUD {
+public class HomeUsager extends App implements HomeCRUD<Usager> {
   @Override
-  public int addOne() {
-    // TODO Auto-generated method stub
-    return 0;
+  public int addOne(Usager usager) {
+    Database db = new Database();
+    try {
+      db.connect();
+      Connection conn = db.getConn();
+      PreparedStatement statement = conn
+          .prepareStatement("INSERT INTO usager (nom, prenom, status, email) VALUES (?, ?, ?, ?)");
+      statement.setString(1, usager.getNom());
+      statement.setString(2, usager.getPrenom());
+      statement.setString(3, usager.getStatut().toString());
+      statement.setString(4, usager.getEmail());
+
+      statement.executeUpdate();
+
+      Statement statement2 = conn.createStatement();
+      ResultSet resultSet = statement2.executeQuery("SELECT MAX(id_usager) FROM usager");
+      int id = 0;
+      while (resultSet.next()) {
+        id = resultSet.getInt("MAX(id_usager)");
+      }
+      return id;
+    } catch (SQLException e) {
+      System.err.println("Error while inserting a new usager");
+      e.printStackTrace();
+      return -1;
+    }
   }
 
   @Override
   public void deleteOne(int id) {
-    // TODO Auto-generated method stub
+    Database db = new Database();
+    try {
+      db.connect();
+      Connection conn = db.getConn();
+      PreparedStatement statement = conn.prepareStatement("DELETE FROM usager WHERE id_usager = ?");
+      PreparedStatement statement2 = conn.prepareStatement("DELETE FROM emprunt WHERE usager_id = ?");
+      statement2.setInt(1, id);
+      statement.setInt(1, id);
+      statement2.executeUpdate();
+      int rowsDeleted = statement.executeUpdate();
+
+      if (rowsDeleted > 0) {
+        System.out.println("A usager was deleted successfully!");
+      } else {
+        System.out.println("A usager was not deleted successfully!");
+      }
+
+    } catch (SQLException e) {
+      System.err.println("Error while fetching all usagers");
+      e.printStackTrace();
+    }
 
   }
 
   @Override
-  public void updateOne(int id) {
-    // TODO Auto-generated method stub
+  public void updateOne(Usager usager) {
+    Database db = new Database();
+    try {
+      db.connect();
+      Connection conn = db.getConn();
+      PreparedStatement statement = conn.prepareStatement(
+          "UPDATE usager SET nom = ?, prenom = ?, email = ?, status = ? WHERE id_usager = ?");
+      statement.setString(1, usager.getNom());
+      statement.setString(2, usager.getPrenom());
+      statement.setString(3, usager.getEmail());
+      statement.setString(4, usager.getStatut().toString());
+      statement.setInt(5, usager.getId());
 
+      int rowsUpdated = statement.executeUpdate();
+      if (rowsUpdated > 0) {
+        System.out.println("An existing usager was updated successfully!");
+      } else {
+        System.out.println("An existing usager was not updated successfully!");
+      }
+
+    } catch (SQLException e) {
+      System.err.println("Error while updating a usager");
+      e.printStackTrace();
+    }
   }
 
   private TableView<Usager> table = new TableView<>();
@@ -71,7 +136,7 @@ public class HomeUsager extends App implements HomeCRUD {
       }
 
     } catch (SQLException e) {
-      System.err.println("Error while fetching all books");
+      System.err.println("Error while fetching all usagers");
       e.printStackTrace();
     }
   }

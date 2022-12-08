@@ -8,5 +8,4 @@ public interface HomeCRUD<T> {
   public void updateOne(T t);
 
   public void deleteOne(int id);
-
 }
