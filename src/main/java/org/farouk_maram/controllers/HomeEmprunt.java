@@ -6,11 +6,11 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.time.LocalDate;
 
 import org.farouk_maram.App;
 import org.farouk_maram.Entities.Emprunt;
 import org.farouk_maram.Entities.EmpruntForHome;
-import org.farouk_maram.Entities.Livre;
 import org.farouk_maram.db.Database;
 import org.farouk_maram.interfaces.HomeCRUD;
 
@@ -20,6 +20,7 @@ import javafx.collections.transformation.FilteredList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
@@ -31,6 +32,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -38,29 +40,29 @@ import javafx.stage.Stage;
 // change select query to sort by date
 public class HomeEmprunt extends App implements HomeCRUD<Emprunt> {
   @Override
+  public void updateOne(Emprunt t) {
+    // TODO Auto-generated method stub
+  }
+
+  @Override
   public int addOne(Emprunt emprunt) {
     Database db = new Database();
     try {
       db.connect();
       Connection conn = db.getConn();
       PreparedStatement statement = conn
-          .prepareStatement("INSERT INTO emprunt (date_emprunt, date_retour, livre_id, usager_id) VALUES (?, ?, ?, ?)");
+          .prepareStatement("INSERT INTO emprunt (date_emprunt, livre_id, usager_id) VALUES (?, ?, ?)");
       statement.setDate(1, emprunt.getDateEmprunt());
-      if (emprunt.getDateRetour() == null) {
-        statement.setDate(2, null);
-      } else {
-        statement.setDate(2, emprunt.getDateRetour());
-      }
-      statement.setInt(3, emprunt.getLivre().getId());
-      statement.setInt(4, emprunt.getUsager().getId());
+      statement.setInt(2, emprunt.getLivreId());
+      statement.setInt(3, emprunt.getUsagerId());
 
       statement.executeUpdate();
 
       Statement statement2 = conn.createStatement();
-      ResultSet resultSet = statement2.executeQuery("SELECT MAX(id_livre) FROM livre");
+      ResultSet resultSet = statement2.executeQuery("SELECT MAX(id_emprunt) FROM emprunt");
       int id = 0;
       while (resultSet.next()) {
-        id = resultSet.getInt("MAX(id_livre)");
+        id = resultSet.getInt("MAX(id_emprunt)");
       }
       return id;
     } catch (SQLException e) {
@@ -74,26 +76,26 @@ public class HomeEmprunt extends App implements HomeCRUD<Emprunt> {
   public void deleteOne(int id) {
   }
 
-  @Override
   // rendre livre => update date_retour
-  public void updateOne(Emprunt emprunt) {
+  public void updateOne(int id) {
     Database db = new Database();
     try {
       db.connect();
       Connection conn = db.getConn();
+      System.out.println("livre id: " + id);
       PreparedStatement statement = conn.prepareStatement(
-          "UPDATE emprunt SET date_retour = NOW() WHERE id_livre = ?");
-      statement.setInt(1, emprunt.getLivre().getId());
+          "UPDATE emprunt SET date_retour = NOW() WHERE id_emprunt = ?");
+      statement.setInt(1, id);
 
       int rowsUpdated = statement.executeUpdate();
       if (rowsUpdated > 0) {
-        System.out.println("An existing book was updated successfully!");
+        System.out.println("An existing emprunt was updated successfully!");
       } else {
-        System.out.println("An existing book was not updated successfully!");
+        System.out.println("An existing emprunt was not updated successfully!");
       }
 
     } catch (SQLException e) {
-      System.err.println("Error while updating a book");
+      System.err.println("Error while updating an emprunt");
       e.printStackTrace();
     }
   }
@@ -131,7 +133,7 @@ public class HomeEmprunt extends App implements HomeCRUD<Emprunt> {
       }
 
     } catch (SQLException e) {
-      System.err.println("Error while fetching all books");
+      System.err.println("Error while fetching all emprunts");
       e.printStackTrace();
     }
   }
@@ -147,11 +149,11 @@ public class HomeEmprunt extends App implements HomeCRUD<Emprunt> {
 
     Scene scene = new Scene(stackPane, 640, 480);
 
-    stage.setTitle("All books");
+    stage.setTitle("All emprunts");
     stage.setMinHeight(800);
     stage.setMinWidth(800);
 
-    final Label label = new Label("All Books");
+    final Label label = new Label("All emprunts");
     label.setFont(new Font("Arial", 20));
 
     table.setEditable(true);
@@ -244,27 +246,93 @@ public class HomeEmprunt extends App implements HomeCRUD<Emprunt> {
       dialog.setTitle("Add a book");
       dialog.setMinWidth(400);
       dialog.setMinHeight(400);
-      Label label1 = new Label("Titre");
+      Label label1 = new Label("Date Emprunt");
       TextField textField1 = new TextField();
-      Label label2 = new Label("Auteur");
+      Label label2 = new Label("Email");
       TextField textField2 = new TextField();
       Label label3 = new Label("Isbn");
       TextField textField3 = new TextField();
+
       Button button = new Button("Add");
-      VBox vBox = new VBox(label1, textField1, label2, textField2, label3,
-          textField3, button);
+
+      VBox vBox = new VBox(label1, textField1, label2, textField2, label3, textField3, button);
 
       Scene myDialogScene = new Scene(vBox);
 
       button.setOnAction(e1 -> {
 
-        Emprunt emprunt = new Emprunt(textField1.getText(), textField2.getText(),
-            textField3.getText());
+        String dateEmprunt = textField1.getText();
+        String email = textField2.getText();
+        String isbn = textField3.getText();
+
+        int idLivre = -1;
+        int idUsager = -1;
+        // fetch id of livre by isbn from database
+        Database db = new Database();
+        try {
+          db.connect();
+          Connection conn = db.getConn();
+          PreparedStatement ps = conn.prepareStatement("SELECT id_livre FROM livre WHERE isbn = ?");
+          PreparedStatement ps1 = conn.prepareStatement("SELECT id_usager FROM usager WHERE email = ?");
+
+          ps.setString(1, isbn);
+          ps1.setString(1, email);
+
+          ResultSet rs = ps.executeQuery();
+          ResultSet rs1 = ps1.executeQuery();
+          if (rs.next()) {
+            idLivre = rs.getInt("id_livre");
+            if (rs1.next()) {
+              idUsager = rs1.getInt("id_usager");
+            }
+          }
+        } catch (SQLException e2) {
+          e2.printStackTrace();
+        }
+
+        if (idLivre == -1) {
+          Alert alert = new Alert(Alert.AlertType.ERROR);
+          alert.setTitle("Error");
+          alert.setHeaderText("Livre not found");
+          alert.setContentText("Livre with isbn " + isbn + " not found");
+          alert.showAndWait();
+          return;
+        } else if (idUsager == -1) {
+          Alert alert = new Alert(Alert.AlertType.ERROR);
+          alert.setTitle("Error");
+          alert.setHeaderText("Usager not found");
+          alert.setContentText("Usager with email " + email + " not found");
+          alert.showAndWait();
+          return;
+        }
+
+        Emprunt emprunt = new Emprunt(0, Date.valueOf(dateEmprunt), null, idLivre, idUsager);
 
         int id = addOne(emprunt);
         emprunt.setId(id);
 
-        emprunts.add(emprunt);
+        // select livre.titre, livre.auteur from livre where livre.id_livre =
+        // emprunt.id_livre;
+        String titre = "";
+        String auteur = "";
+        try {
+          db.connect();
+          Connection conn = db.getConn();
+          PreparedStatement ps = conn.prepareStatement(
+              "SELECT titre, auteur FROM livre WHERE id_livre = ?");
+          ps.setInt(1, idLivre);
+          ResultSet rs = ps.executeQuery();
+          if (rs.next()) {
+            titre = rs.getString("titre");
+            auteur = rs.getString("auteur");
+          }
+        } catch (SQLException e2) {
+          e2.printStackTrace();
+        }
+
+        EmpruntForHome empruntForHome = new EmpruntForHome(emprunt, titre, auteur, isbn, email);
+
+        emprunts.add(empruntForHome);
         dialog.close();
       });
 
@@ -280,31 +348,41 @@ public class HomeEmprunt extends App implements HomeCRUD<Emprunt> {
       dialog.setTitle("Rendre un livre");
       dialog.setMinWidth(400);
       dialog.setMinHeight(400);
-      Label label1 = new Label("Titre");
-      TextField textField1 = new TextField(table.getSelectionModel().getSelectedItem().getTitre());
-      Label label2 = new Label("Auteur");
-      TextField textField2 = new TextField(table.getSelectionModel().getSelectedItem().getAuteur());
-      Label label3 = new Label("Isbn");
-      TextField textField3 = new TextField(table.getSelectionModel().getSelectedItem().getIsbn());
-      Button button = new Button("Edit");
-      VBox vBox = new VBox(label1, textField1, label2, textField2, label3, textField3, button);
+
+      Text text = new Text("The book is returned");
+      text.setFont(Font.font("Verdana", FontWeight.BOLD, 20));
+
+      VBox vBox = new VBox(text);
 
       Scene myDialogScene = new Scene(vBox);
 
-      button.setOnAction(e1 -> {
-        Emprunt emprunt = new Emprunt(table.getSelectionModel().getSelectedItem().getId(), textField1.getText(),
-            textField2.getText(),
-            textField3.getText());
+      // Emprunt emprunt = new
+      // Emprunt(table.getSelectionModel().getSelectedItem().getId(),
+      // textField1.getText(),
+      // textField2.getText(),
+      // textField3.getText());
 
-        updateOne(emprunt);
+      int id = table.getSelectionModel().getSelectedItem().getId();
 
-        emprunts.set(emprunts.indexOf(table.getSelectionModel().getSelectedItem()), emprunt);
-        dialog.close();
-      });
+      updateOne(id);
+
+      int index = -1;
+      for (int i = 0; i < emprunts.size(); i++) {
+        if (emprunts.get(i).getId() == id) {
+          index = i;
+          break;
+        }
+      }
+
+      EmpruntForHome emprunt = emprunts.get(index);
+      emprunt.setDateRetour(LocalDate.now().toString());
+
+      emprunts.set(index, emprunt);
+
+      dialog.close();
 
       dialog.setScene(myDialogScene);
       dialog.show();
-
     });
 
     deleteButton.setOnAction(e -> {

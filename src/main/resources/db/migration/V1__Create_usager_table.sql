@@ -3,10 +3,9 @@ create table usager (
   nom varchar(45) NOT NULL,
   prenom varchar(45) NOT NULL,
   statut varchar(45) NOT NULL,
-  email varchar(40) NOT NULL,
+  email varchar(40) UNIQUE NOT NULL,
   primary key (id_usager),
   constraint CHK_statut check (
     statut = 'enseignant'
     or statut = 'etudiant'
-  )
 );

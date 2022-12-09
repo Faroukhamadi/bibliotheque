@@ -14,6 +14,16 @@ public class EmpruntForHome {
   private SimpleStringProperty isbn;
   private SimpleStringProperty email;
 
+  public EmpruntForHome(Emprunt emprunt, String titre, String auteur, String isbn, String email) {
+    this.id = emprunt.getId();
+    this.dateEmprunt = emprunt.getDateEmprunt();
+    this.dateRetour = null;
+    this.titre = new SimpleStringProperty(titre);
+    this.auteur = new SimpleStringProperty(auteur);
+    this.isbn = new SimpleStringProperty(isbn);
+    this.email = new SimpleStringProperty(email);
+  }
+
   public EmpruntForHome(int id, Date dateEmprunt, String dateRetour, String titre, String auteur, String isbn,
       String email) {
     this.id = id;
@@ -21,6 +31,22 @@ public class EmpruntForHome {
     this.dateRetour = dateRetour;
     this.titre = new SimpleStringProperty(titre);
     this.auteur = new SimpleStringProperty(auteur);
+    this.isbn = new SimpleStringProperty(isbn);
+    this.email = new SimpleStringProperty(email);
+  }
+
+  public EmpruntForHome(Date dateEmprunt, String dateRetour, String titre, String auteur, String isbn,
+      String email) {
+    this.dateEmprunt = dateEmprunt;
+    this.dateRetour = dateRetour;
+    this.titre = new SimpleStringProperty(titre);
+    this.auteur = new SimpleStringProperty(auteur);
+    this.isbn = new SimpleStringProperty(isbn);
+    this.email = new SimpleStringProperty(email);
+  }
+
+  public EmpruntForHome(Date dateEmprunt, String isbn, String email) {
+    this.dateEmprunt = dateEmprunt;
     this.isbn = new SimpleStringProperty(isbn);
     this.email = new SimpleStringProperty(email);
   }

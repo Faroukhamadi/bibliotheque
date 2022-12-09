@@ -10,8 +10,8 @@ public class Emprunt {
   private Date dateRetour;
   private Livre livre;
   private Usager usager;
-  private SimpleIntegerProperty livreId;
-  private SimpleIntegerProperty usagerId;
+  private SimpleIntegerProperty livreId = new SimpleIntegerProperty();
+  private SimpleIntegerProperty usagerId = new SimpleIntegerProperty();
 
   public Emprunt(int id, Date dateEmprunt, Date dateRetour, Livre livre, Usager usager) {
     this.id = id;
@@ -75,16 +75,16 @@ public class Emprunt {
         + ", usager=" + usager + "]";
   }
 
-  public SimpleIntegerProperty getLivreId() {
-    return livreId;
+  public int getLivreId() {
+    return livreId.get();
   }
 
   public void setLivreId(SimpleIntegerProperty livreId) {
     this.livreId = livreId;
   }
 
-  public SimpleIntegerProperty getUsagerId() {
-    return usagerId;
+  public int getUsagerId() {
+    return usagerId.get();
   }
 
   public void setUsagerId(SimpleIntegerProperty usagerId) {
