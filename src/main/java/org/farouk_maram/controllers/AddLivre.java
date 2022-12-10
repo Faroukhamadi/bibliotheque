@@ -50,7 +50,6 @@ public class AddLivre extends App {
     vBox.setSpacing(30);
     vBox.setAlignment(Pos.CENTER);
     vBox.setPadding(new Insets(10));
-    Scene myDialogScene = new Scene(vBox);
 
     StackPane stackPane = new StackPane();
 

@@ -1,3 +1,4 @@
+
 package org.farouk_maram.controllers;
 
 import java.sql.Connection;
@@ -38,7 +39,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 // change select query to sort by date
-public class HomeEmprunt extends App implements HomeCRUD<Emprunt> {
+public class HomeEmpruntEnCours extends App implements HomeCRUD<Emprunt> {
   @Override
   public int addOne(Emprunt emprunt) {
     Database db = new Database();
@@ -111,7 +112,7 @@ public class HomeEmprunt extends App implements HomeCRUD<Emprunt> {
       Statement statement = conn.createStatement();
       ResultSet resultSet = statement
           .executeQuery(
-              "select * from emprunt e, livre l, usager u where e.livre_id = l.id_livre and u.id_usager = e.usager_id order by date_emprunt desc");
+              "select * from emprunt e, livre l, usager u where e.livre_id = l.id_livre and u.id_usager = e.usager_id and date_retour is null order by date_emprunt desc");
       while (resultSet.next()) {
         int id = resultSet.getInt("id_emprunt");
         Date dateEmprunt = resultSet.getDate("date_emprunt");
@@ -137,7 +138,7 @@ public class HomeEmprunt extends App implements HomeCRUD<Emprunt> {
     }
   }
 
-  public HomeEmprunt(Stage stage) {
+  public HomeEmpruntEnCours(Stage stage) {
     this.stage = stage;
   }
 
@@ -148,11 +149,11 @@ public class HomeEmprunt extends App implements HomeCRUD<Emprunt> {
 
     Scene scene = new Scene(stackPane, 640, 480);
 
-    stage.setTitle("All emprunts");
+    stage.setTitle("Emprunts en cours");
     stage.setMinHeight(800);
     stage.setMinWidth(800);
 
-    final Label label = new Label("All emprunts");
+    final Label label = new Label("Emprunts en cours");
     label.setFont(new Font("Arial", 20));
 
     table.setEditable(true);
@@ -352,12 +353,6 @@ public class HomeEmprunt extends App implements HomeCRUD<Emprunt> {
       VBox vBox = new VBox(text);
 
       Scene myDialogScene = new Scene(vBox);
-
-      // Emprunt emprunt = new
-      // Emprunt(table.getSelectionModel().getSelectedItem().getId(),
-      // textField1.getText(),
-      // textField2.getText(),
-      // textField3.getText());
 
       int id = table.getSelectionModel().getSelectedItem().getId();
 
