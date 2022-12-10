@@ -8,4 +8,5 @@ create table usager (
   constraint CHK_statut check (
     statut = 'enseignant'
     or statut = 'etudiant'
+  )
 );

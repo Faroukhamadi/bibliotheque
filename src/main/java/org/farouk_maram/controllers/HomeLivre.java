@@ -70,13 +70,40 @@ public class HomeLivre extends App implements HomeCRUD<Livre> {
         try {
             db.connect();
             Connection conn = db.getConn();
-            PreparedStatement statement = conn.prepareStatement("DELETE FROM livre WHERE id_livre = ?");
+            // PreparedStatement statement = conn.prepareStatement("DELETE FROM livre WHERE
+            // id_livre = ?");
+            PreparedStatement statement = conn.prepareStatement("DELETE FROM livre WHERE isbn = ?");
             PreparedStatement statement2 = conn.prepareStatement("DELETE FROM emprunt WHERE livre_id = ?");
             statement2.setInt(1, id);
             statement.setInt(1, id);
             statement2.executeUpdate();
             int rowsDeleted = statement.executeUpdate();
+            if (rowsDeleted > 0) {
+                System.out.println("A book was deleted successfully!");
+            } else {
+                System.out.println("A book was not deleted successfully!");
+            }
 
+        } catch (SQLException e) {
+            System.err.println("Error while fetching all books");
+            e.printStackTrace();
+        }
+
+    }
+
+    public void deleteOneExemplaire(String id) {
+        Database db = new Database();
+        try {
+            db.connect();
+            Connection conn = db.getConn();
+            // PreparedStatement statement = conn.prepareStatement("DELETE FROM livre WHERE
+            // id_livre = ?");
+            PreparedStatement statement = conn.prepareStatement("DELETE FROM livre WHERE id_livre = ?");
+            PreparedStatement statement2 = conn.prepareStatement("DELETE FROM emprunt WHERE livre_id = ?");
+            statement2.setString(1, id);
+            statement.setString(1, id);
+            statement2.executeUpdate();
+            int rowsDeleted = statement.executeUpdate();
             if (rowsDeleted > 0) {
                 System.out.println("A book was deleted successfully!");
             } else {
@@ -209,9 +236,10 @@ public class HomeLivre extends App implements HomeCRUD<Livre> {
             }
         });
 
-        Button deleteButton = new Button("Delete");
         Button editButton = new Button("Edit");
         Button addButton = new Button("Add");
+        Button deleteButton = new Button("Delete Livre");
+        Button deleteExemplaireButton = new Button("Delete Exemplaire");
 
         editButton.setDisable(true);
         deleteButton.setDisable(true);
@@ -341,7 +369,7 @@ public class HomeLivre extends App implements HomeCRUD<Livre> {
         final VBox vbox = new VBox();
         vbox.setSpacing(5);
         vbox.setPadding(new Insets(10, 0, 0, 10));
-        vbox.getChildren().addAll(label, table, hBox, addButton, editButton, deleteButton);
+        vbox.getChildren().addAll(label, table, hBox, addButton, editButton, deleteButton, deleteExemplaireButton);
 
         StackPane root = (StackPane) scene.getRoot();
         root.getChildren().addAll(vbox);
