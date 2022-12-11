@@ -414,15 +414,63 @@ public class HomeLivre extends App implements HomeCRUD<Livre> {
 
             for (int id : ids) {
                 if (hasActiveBorrow(id) && !hasActiveBorrowExpired(id)) {
-                    text.setText("Warning: There are active borrows for this book that are less than 1 year old!");
+                    text.setText("Warning: There are active borrows of this book that are less than 1 year old!");
                     text2.setText("Are you sure you want to delete all copies of this book?");
                     break;
                 } else if (hasActiveBorrow(id)) {
                     text.setText(
-                            "There are active borrows for this book that might have been lost. Are you sure you want to delete all copies of this book?");
+                            "There are active borrows of this book that might have been lost. Are you sure you want to delete all copies of this book?");
                     break;
                 }
             }
+            yesButton.setOnAction(e1 -> {
+                Livre livre = table.getSelectionModel().getSelectedItem();
+                deleteOne(livre.getId());
+                livres.remove(livre);
+                dialog.close();
+            });
+
+            noButton.setOnAction(e1 -> {
+                dialog.close();
+            });
+
+            dialog.setScene(myDialogScene);
+            dialog.show();
+
+        });
+
+        deleteExemplaireButton.setOnAction(e -> {
+            Stage dialog = new Stage();
+
+            dialog.initModality(Modality.APPLICATION_MODAL);
+
+            Text text = new Text("Are you sure you want to delete this copy of the book?");
+            text.setFont(new Font("Arial", 20));
+            text.setFill(Color.RED);
+            Text text2 = new Text();
+            text.setFont(new Font("Arial", 20));
+
+            Button yesButton = new Button("Yes");
+            Button noButton = new Button("No");
+            HBox hBox = new HBox(yesButton, noButton);
+            hBox.setSpacing(30);
+            hBox.setAlignment(Pos.CENTER);
+            VBox vBox = new VBox(text, text2, hBox);
+            vBox.setSpacing(30);
+            vBox.setAlignment(Pos.CENTER);
+            vBox.setPadding(new Insets(10));
+            Scene myDialogScene = new Scene(vBox);
+
+            int selectedItemId = table.getSelectionModel().getSelectedItem().getId();
+
+            if (hasActiveBorrow(selectedItemId) && !hasActiveBorrowExpired(selectedItemId)) {
+                text.setText("Warning: There is an active borrow of this copy that is less than 1 year old!");
+                text2.setText("Are you sure you want to delete it?");
+            } else if (hasActiveBorrow(selectedItemId)) {
+                text.setText(
+                        "There is an active borrow of this copy that might have been lost. Are you sure you want to delete it?");
+            }
+
             yesButton.setOnAction(e1 -> {
                 Livre livre = table.getSelectionModel().getSelectedItem();
                 deleteOne(livre.getId());
