@@ -7,6 +7,7 @@ public class Authenticate {
 
   private Authenticate(String username) {
     Authenticate.username = username;
+
   }
 
   public static Authenticate login(String username) {

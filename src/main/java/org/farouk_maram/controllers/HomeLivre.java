@@ -5,6 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 
 import org.farouk_maram.App;
 import org.farouk_maram.Entities.Livre;
@@ -27,6 +28,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Modality;
@@ -61,6 +63,70 @@ public class HomeLivre extends App implements HomeCRUD<Livre> {
             System.err.println("Error while inserting a new book");
             e.printStackTrace();
             return -1;
+        }
+    }
+
+    public boolean hasActiveBorrow(int id) {
+        Database db = new Database();
+        try {
+            db.connect();
+            Connection conn = db.getConn();
+            PreparedStatement statement = conn
+                    .prepareStatement("SELECT * FROM emprunt WHERE livre_id = ? and date_retour IS NULL");
+            statement.setInt(1, id);
+            ResultSet resultSet = statement.executeQuery();
+            if (resultSet.next()) {
+                return true;
+            }
+            return false;
+        } catch (SQLException e) {
+            System.err.println("Error while fetching all books");
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public boolean hasActiveBorrowExpired(int id) {
+        Database db = new Database();
+        try {
+            db.connect();
+            Connection conn = db.getConn();
+            PreparedStatement statement = conn
+                    .prepareStatement(
+                            "SELECT * FROM emprunt WHERE livre_id = ? and date_retour IS NULL and date_emprunt < DATE_SUB(NOW(), INTERVAL 1 YEAR)");
+            statement.setInt(1, id);
+            ResultSet resultSet = statement.executeQuery();
+            if (resultSet.next()) {
+                return true;
+            }
+            return false;
+        } catch (SQLException e) {
+            System.err.println("Error while fetching all books");
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public ArrayList<Integer> getIdsByIsbn(String isbn) {
+        Database db = new Database();
+        ArrayList<Integer> ids = new ArrayList<>();
+        try {
+            db.connect();
+            Connection conn = db.getConn();
+            PreparedStatement statement = conn
+                    .prepareStatement(
+                            "SELECT id_livre FROM livre where isbn = ?");
+            statement.setString(1, isbn);
+            ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                ids.add(resultSet.getInt("id_livre"));
+            }
+            System.out.println("ids: " + ids);
+            return ids;
+        } catch (SQLException e) {
+            System.err.println("Error while fetching all books");
+            e.printStackTrace();
+            return ids;
         }
     }
 
@@ -243,6 +309,7 @@ public class HomeLivre extends App implements HomeCRUD<Livre> {
 
         editButton.setDisable(true);
         deleteButton.setDisable(true);
+        deleteExemplaireButton.setDisable(true);
 
         choiceBox.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {// reset table and
             if (newVal != null) {
@@ -324,19 +391,38 @@ public class HomeLivre extends App implements HomeCRUD<Livre> {
 
             dialog.initModality(Modality.APPLICATION_MODAL);
 
-            Text text = new Text("Are you sure you want to delete this book?");
+            Text text = new Text("Are you sure you want to delete all copies of this book?");
             text.setFont(new Font("Arial", 20));
+            text.setFill(Color.RED);
+            Text text2 = new Text();
+            text.setFont(new Font("Arial", 20));
+
             Button yesButton = new Button("Yes");
             Button noButton = new Button("No");
             HBox hBox = new HBox(yesButton, noButton);
             hBox.setSpacing(30);
             hBox.setAlignment(Pos.CENTER);
-            VBox vBox = new VBox(text, hBox);
+            VBox vBox = new VBox(text, text2, hBox);
             vBox.setSpacing(30);
             vBox.setAlignment(Pos.CENTER);
             vBox.setPadding(new Insets(10));
             Scene myDialogScene = new Scene(vBox);
 
+            String selectedItemIsbn = table.getSelectionModel().getSelectedItem().getIsbn();
+
+            ArrayList<Integer> ids = getIdsByIsbn(selectedItemIsbn);
+
+            for (int id : ids) {
+                if (hasActiveBorrow(id) && !hasActiveBorrowExpired(id)) {
+                    text.setText("Warning: There are active borrows for this book that are less than 1 year old!");
+                    text2.setText("Are you sure you want to delete all copies of this book?");
+                    break;
+                } else if (hasActiveBorrow(id)) {
+                    text.setText(
+                            "There are active borrows for this book that might have been lost. Are you sure you want to delete all copies of this book?");
+                    break;
+                }
+            }
             yesButton.setOnAction(e1 -> {
                 Livre livre = table.getSelectionModel().getSelectedItem();
                 deleteOne(livre.getId());
@@ -358,9 +444,11 @@ public class HomeLivre extends App implements HomeCRUD<Livre> {
             if (newSelection != null) {
                 editButton.setDisable(false);
                 deleteButton.setDisable(false);
+                deleteExemplaireButton.setDisable(false);
             } else {
                 editButton.setDisable(true);
                 deleteButton.setDisable(true);
+                deleteExemplaireButton.setDisable(true);
             }
         });
 

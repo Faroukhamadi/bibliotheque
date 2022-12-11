@@ -12,6 +12,10 @@ public class Database {
   private Connection conn = null;
   private final String url = "jdbc:mysql://localhost:3306/bibliotheque";
 
+  public String getUrl() {
+    return url;
+  }
+
   public Connection getConn() {
     return conn;
   }
@@ -36,5 +40,4 @@ public class Database {
 
     System.out.println("Connected to database!");
   }
-
 }
