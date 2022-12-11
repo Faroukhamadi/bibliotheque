@@ -29,9 +29,27 @@ insert into
   livre (titre, auteur, isbn)
 values
   (
+    'demain',
+    'guillaum musso',
+    '978349296817'
+  );
+
+insert into
+  livre (titre, auteur, isbn)
+values
+  (
     'the merchant of venice',
     'chakespeare',
     '978000325514'
+  );
+
+insert into
+  livre (titre, auteur, isbn)
+values
+  (
+    'antigone',
+    'jean anouill',
+    '9783548227320'
   );
 
 insert into

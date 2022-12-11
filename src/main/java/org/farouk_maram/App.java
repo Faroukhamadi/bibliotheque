@@ -7,8 +7,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 import org.farouk_maram.Authentication.Authenticate;
-import org.farouk_maram.controllers.HomeEmpruntEnCours;
-import org.farouk_maram.controllers.HomeEmpruntHistory;
 import org.farouk_maram.controllers.HomeLivre;
 import org.farouk_maram.controllers.Login;
 import org.farouk_maram.db.Database;
@@ -90,7 +88,6 @@ public class App extends Application {
 
         stage.setTitle("Register");
         GridPane grid = new GridPane();
-        System.out.println("grid props: " + grid.getProperties());
         grid.setAlignment(javafx.geometry.Pos.CENTER);
         grid.setHgap(10);
         grid.setVgap(10);

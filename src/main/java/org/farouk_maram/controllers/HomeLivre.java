@@ -130,6 +130,32 @@ public class HomeLivre extends App implements HomeCRUD<Livre> {
         }
     }
 
+    public void deleteOneLivre(String isbn, int id) {
+        Database db = new Database();
+        try {
+            db.connect();
+            Connection conn = db.getConn();
+            // PreparedStatement statement = conn.prepareStatement("DELETE FROM livre WHERE
+            // id_livre = ?");
+            PreparedStatement statement = conn.prepareStatement("DELETE FROM livre WHERE isbn = ?");
+            PreparedStatement statement2 = conn.prepareStatement("DELETE FROM emprunt WHERE livre_id = ?");
+            statement2.setInt(1, id);
+            statement.setString(1, isbn);
+            statement2.executeUpdate();
+            int rowsDeleted = statement.executeUpdate();
+            if (rowsDeleted > 0) {
+                System.out.println("A book was deleted successfully!");
+            } else {
+                System.out.println("A book was not deleted successfully!");
+            }
+
+        } catch (SQLException e) {
+            System.err.println("Error while fetching all books");
+            e.printStackTrace();
+        }
+
+    }
+
     @Override
     public void deleteOne(int id) {
         Database db = new Database();
@@ -283,21 +309,20 @@ public class HomeLivre extends App implements HomeCRUD<Livre> {
 
         TextField textField = new TextField();
         textField.setPromptText("Search here!");
-        textField.textProperty().addListener((obs, oldValue, newValue) -> {
+        textField.textProperty().addListener((obs, oldVal, newVal) -> {
             switch (choiceBox.getValue()) {
                 case "Id":
                     flLivre.setPredicate(
-                            p -> Integer.toString(p.getId()).toLowerCase()
-                                    .contains(newValue.toLowerCase().trim()));
+                            p -> Integer.toString(p.getId()).toLowerCase().contains(newVal.toLowerCase().trim()));
                     break;
                 case "Titre":
-                    flLivre.setPredicate(p -> p.getTitre().toLowerCase().contains(newValue.toLowerCase().trim()));
+                    flLivre.setPredicate(p -> p.getTitre().toLowerCase().contains(newVal.toLowerCase().trim()));
                     break;
                 case "Auteur":
-                    flLivre.setPredicate(p -> p.getAuteur().toLowerCase().contains(newValue.toLowerCase().trim()));
+                    flLivre.setPredicate(p -> p.getAuteur().toLowerCase().contains(newVal.toLowerCase().trim()));
                     break;
                 case "Isbn":
-                    flLivre.setPredicate(p -> p.getIsbn().toLowerCase().contains(newValue.toLowerCase().trim()));
+                    flLivre.setPredicate(p -> p.getIsbn().toLowerCase().contains(newVal.toLowerCase().trim()));
                     break;
             }
         });
@@ -331,6 +356,8 @@ public class HomeLivre extends App implements HomeCRUD<Livre> {
             Label label3 = new Label("Isbn");
             TextField textField3 = new TextField();
             Button button = new Button("Add");
+            button.setMinSize(100, 50);
+
             VBox vBox = new VBox(label1, textField1, label2, textField2, label3, textField3, button);
 
             Scene myDialogScene = new Scene(vBox);
@@ -366,6 +393,8 @@ public class HomeLivre extends App implements HomeCRUD<Livre> {
             Label label3 = new Label("Isbn");
             TextField textField3 = new TextField(table.getSelectionModel().getSelectedItem().getIsbn());
             Button button = new Button("Edit");
+            button.setMinSize(100, 50);
+
             VBox vBox = new VBox(label1, textField1, label2, textField2, label3, textField3, button);
 
             Scene myDialogScene = new Scene(vBox);
@@ -396,9 +425,14 @@ public class HomeLivre extends App implements HomeCRUD<Livre> {
             text.setFill(Color.RED);
             Text text2 = new Text();
             text.setFont(new Font("Arial", 20));
+            text2.setFont(new Font("Arial", 15));
 
             Button yesButton = new Button("Yes");
             Button noButton = new Button("No");
+
+            yesButton.setMinSize(100, 50);
+            noButton.setMinSize(100, 50);
+
             HBox hBox = new HBox(yesButton, noButton);
             hBox.setSpacing(30);
             hBox.setAlignment(Pos.CENTER);
@@ -425,8 +459,15 @@ public class HomeLivre extends App implements HomeCRUD<Livre> {
             }
             yesButton.setOnAction(e1 -> {
                 Livre livre = table.getSelectionModel().getSelectedItem();
-                deleteOne(livre.getId());
+                // deleteOne(livre.getId());
+                ids.forEach(id -> {
+                    deleteOneLivre(selectedItemIsbn, id);
+                });
                 livres.remove(livre);
+                // remove all exemplaires from livres
+                livres.removeIf(l -> l.getIsbn().equals(selectedItemIsbn));
+                // livres.removeIf(l -> l.getIsbn().equals(selectedItemIsbn));
+
                 dialog.close();
             });
 
@@ -452,6 +493,12 @@ public class HomeLivre extends App implements HomeCRUD<Livre> {
 
             Button yesButton = new Button("Yes");
             Button noButton = new Button("No");
+
+            text2.setFont(new Font("Arial", 15));
+
+            yesButton.setMinSize(100, 50);
+            noButton.setMinSize(100, 50);
+
             HBox hBox = new HBox(yesButton, noButton);
             hBox.setSpacing(30);
             hBox.setAlignment(Pos.CENTER);

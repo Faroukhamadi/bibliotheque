@@ -24,7 +24,6 @@ public class Database {
     if (conn != null && !conn.isClosed() && conn.isValid(0)) {
       return;
     }
-    System.out.println("Connecting to database...");
     Properties connectionProps = new Properties();
 
     Dotenv dotenv = Dotenv.configure().load();
@@ -38,6 +37,5 @@ public class Database {
     conn = DriverManager.getConnection(
         "jdbc:mysql://localhost:3306/bibliotheque", connectionProps);
 
-    System.out.println("Connected to database!");
   }
 }
