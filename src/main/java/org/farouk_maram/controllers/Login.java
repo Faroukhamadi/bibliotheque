@@ -61,7 +61,6 @@ public class Login extends App {
 
     Label usernameLabel = new Label("Nom d'utilisateur");
     usernameLabel.setStyle("-fx-text-fill: #0b4f6c;");
-
     TextField usernameField = new TextField();
     usernameField.setStyle(
         " -fx-background-color: -fx-text-box-border, -fx-background ; -fx-background-insets: 0, 0 0 1 0 ; -fx-background-radius: 0 ;");
@@ -84,6 +83,21 @@ public class Login extends App {
     passwordLabel.setStyle("-fx-text-fill: #0b4f6c;");
 
     PasswordField passwordField = new PasswordField();
+
+    Label passwordErrorLabel = new Label();
+
+    passwordField.textProperty().addListener(new ChangeListener<String>() {
+      @Override
+      public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+        if (!isValidPassword(newValue)) {
+          passwordErrorLabel
+              .setText("Le mot de passe doit contenir au moins 8 caractères, une lettre et un chiffre");
+          passwordErrorLabel.setStyle("-fx-text-fill: red;");
+        } else {
+          passwordErrorLabel.setText("");
+        }
+      }
+    });
 
     passwordField.setStyle(
         " -fx-background-color: -fx-text-box-border, -fx-background ; -fx-background-insets: 0, 0 0 1 0 ; -fx-background-radius: 0 ;");
@@ -126,7 +140,9 @@ public class Login extends App {
 
     loginButton.disableProperty().bind(
         Bindings.isEmpty(usernameField.textProperty())
-            .or(Bindings.isEmpty(passwordField.textProperty())));
+            .or(Bindings.isEmpty(passwordField.textProperty()))
+            .or(Bindings.createBooleanBinding(() -> !isValidPassword(passwordField.getText()),
+                passwordField.textProperty())));
 
     Hyperlink registerLink = new Hyperlink("Est-ce votre première visite? Inscrivez-vous maintenant!");
 
@@ -201,8 +217,9 @@ public class Login extends App {
     grid.add(usernameField, 0, 2);
     grid.add(passwordLabel, 0, 3);
     grid.add(passwordField, 0, 4);
-    grid.add(loginButton, 0, 5);
-    grid.add(registerLink, 0, 6);
+    grid.add(passwordErrorLabel, 0, 5);
+    grid.add(loginButton, 0, 6);
+    grid.add(registerLink, 0, 7);
 
     StackPane root = (StackPane) scene.getRoot();
     root.getChildren().add(grid);

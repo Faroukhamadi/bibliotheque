@@ -56,6 +56,7 @@ public class Register extends App {
     scenetitle.setFont(Font.font("Sans-serif", 100));
 
     Label usernameLabel = new Label("Nom d'utilisateur");
+    Label passwordConfirmationErrorLabel = new Label();
 
     usernameLabel.setStyle("-fx-text-fill: #0b4f6c;");
 
@@ -77,6 +78,7 @@ public class Register extends App {
 
     });
 
+    Label passwordErrorLabel = new Label();
     Label passwordLabel = new Label("Mot de passe");
 
     passwordLabel.setStyle("-fx-text-fill: #0b4f6c;");
@@ -104,6 +106,30 @@ public class Register extends App {
     passwordConfirmLabel.setStyle("-fx-text-fill: #0b4f6c;");
 
     PasswordField passwordConfirmField = new PasswordField();
+
+    passwordConfirmField.textProperty().addListener(new ChangeListener<String>() {
+      @Override
+      public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+        if (!newValue.equals(passwordField.getText())) {
+          passwordConfirmationErrorLabel.setText("Les mots de passe ne correspondent pas");
+          passwordConfirmationErrorLabel.setStyle("-fx-text-fill: red;");
+        } else {
+          passwordConfirmationErrorLabel.setText("");
+        }
+      }
+    });
+
+    passwordField.textProperty().addListener(new ChangeListener<String>() {
+      @Override
+      public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+        if (!newValue.equals(passwordConfirmField.getText())) {
+          passwordConfirmationErrorLabel.setText("Les mots de passe ne correspondent pas");
+          passwordConfirmationErrorLabel.setStyle("-fx-text-fill: red;");
+        } else {
+          passwordConfirmationErrorLabel.setText("");
+        }
+      }
+    });
 
     passwordConfirmField.setStyle(
         " -fx-background-color: -fx-text-box-border, -fx-background ; -fx-background-insets: 0, 0 0 1 0 ; -fx-background-radius: 0 ;");
@@ -145,7 +171,13 @@ public class Register extends App {
     registerButton.disableProperty().bind(
         Bindings.isEmpty(usernameField.textProperty())
             .or(Bindings.isEmpty(passwordField.textProperty()))
-            .or(Bindings.isEmpty(passwordConfirmField.textProperty())));
+            .or(Bindings.isEmpty(passwordConfirmField.textProperty()))
+            .or(Bindings.createBooleanBinding(() -> !isValidPassword(passwordField.getText()),
+                passwordField.textProperty()))
+            .or(Bindings.createBooleanBinding(() -> !isValidPassword(passwordConfirmField.getText()),
+                passwordConfirmField.textProperty())
+                .or(Bindings.createBooleanBinding(() -> !passwordConfirmField.getText()
+                    .equals(passwordField.getText()), passwordConfirmField.textProperty()))));
 
     Hyperlink loginLink = new Hyperlink("Avez-vous déjà un compte? Connectez-vous");
 
@@ -153,6 +185,19 @@ public class Register extends App {
       @Override
       public void handle(ActionEvent actionEvent) {
         changeScencesToLogin();
+      }
+    });
+
+    passwordField.textProperty().addListener(new ChangeListener<String>() {
+      @Override
+      public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+        if (!isValidPassword(newValue)) {
+          passwordErrorLabel
+              .setText("Le mot de passe doit contenir au moins 8 caractères, une lettre et un chiffre");
+          passwordErrorLabel.setStyle("-fx-text-fill: red;");
+        } else {
+          passwordErrorLabel.setText("");
+        }
       }
     });
 
@@ -239,10 +284,12 @@ public class Register extends App {
     grid.add(usernameField, 0, 2);
     grid.add(passwordLabel, 0, 3);
     grid.add(passwordField, 0, 4);
-    grid.add(passwordConfirmLabel, 0, 5);
-    grid.add(passwordConfirmField, 0, 6);
-    grid.add(registerButton, 0, 7);
-    grid.add(loginLink, 0, 8);
+    grid.add(passwordErrorLabel, 0, 5);
+    grid.add(passwordConfirmLabel, 0, 6);
+    grid.add(passwordConfirmField, 0, 7);
+    grid.add(passwordConfirmationErrorLabel, 0, 8);
+    grid.add(registerButton, 0, 9);
+    grid.add(loginLink, 0, 10);
 
     StackPane root = (StackPane) scene.getRoot();
     root.getChildren().add(grid);

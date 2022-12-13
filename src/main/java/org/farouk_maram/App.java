@@ -95,24 +95,21 @@ public class App extends Application {
     }
 
     protected boolean isValidPassword(String password) {
-        return true;
-        // TODO: remove return true after testing
-        // boolean containsDigits = false;
-        // boolean containsLetters = false;
-        // for (int i = 0; i < password.length(); i++) {
-        // char c = password.charAt(i);
-        // if (Character.isDigit(c)) {
-        // containsDigits = true;
-        // } else if (Character.isLetter(c)) {
-        // containsLetters = true;
-        // }
-        // }
-        // if (containsDigits == true && containsLetters == true && password.length() >=
-        // {
-        // return true;
-        // } else {
-        // return false;
-        // }
+        boolean containsDigits = false;
+        boolean containsLetters = false;
+        for (int i = 0; i < password.length(); i++) {
+            char c = password.charAt(i);
+            if (Character.isDigit(c)) {
+                containsDigits = true;
+            } else if (Character.isLetter(c)) {
+                containsLetters = true;
+            }
+        }
+        if (containsDigits == true && containsLetters == true && password.length() >= 8) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     @Override
@@ -136,6 +133,8 @@ public class App extends Application {
         scenetitle.setFont(Font.font("Sans-serif", 100));
 
         Label usernameLabel = new Label("Nom d'utilisateur");
+        Label passwordConfirmationErrorLabel = new Label();
+        Label passwordErrorLabel = new Label();
 
         usernameLabel.setStyle("-fx-text-fill: #0b4f6c;");
 
@@ -185,6 +184,43 @@ public class App extends Application {
 
         PasswordField passwordConfirmField = new PasswordField();
 
+        passwordField.textProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                if (!isValidPassword(newValue)) {
+                    passwordErrorLabel
+                            .setText("Le mot de passe doit contenir au moins 8 caractères, une lettre et un chiffre");
+                    passwordErrorLabel.setStyle("-fx-text-fill: red;");
+                } else {
+                    passwordErrorLabel.setText("");
+                }
+            }
+        });
+
+        passwordConfirmField.textProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                if (!newValue.equals(passwordField.getText())) {
+                    passwordConfirmationErrorLabel.setText("Les mots de passe ne correspondent pas");
+                    passwordConfirmationErrorLabel.setStyle("-fx-text-fill: red;");
+                } else {
+                    passwordConfirmationErrorLabel.setText("");
+                }
+            }
+        });
+
+        passwordField.textProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                if (!newValue.equals(passwordConfirmField.getText())) {
+                    passwordConfirmationErrorLabel.setText("Les mots de passe ne correspondent pas");
+                    passwordConfirmationErrorLabel.setStyle("-fx-text-fill: red;");
+                } else {
+                    passwordConfirmationErrorLabel.setText("");
+                }
+            }
+        });
+
         passwordConfirmField.setStyle(
                 " -fx-background-color: -fx-text-box-border, -fx-background ; -fx-background-insets: 0, 0 0 1 0 ; -fx-background-radius: 0 ;");
         passwordConfirmField.focusedProperty().addListener(new ChangeListener<Boolean>() {
@@ -225,7 +261,13 @@ public class App extends Application {
         registerButton.disableProperty().bind(
                 Bindings.isEmpty(usernameField.textProperty())
                         .or(Bindings.isEmpty(passwordField.textProperty()))
-                        .or(Bindings.isEmpty(passwordConfirmField.textProperty())));
+                        .or(Bindings.isEmpty(passwordConfirmField.textProperty()))
+                        .or(Bindings.createBooleanBinding(() -> !isValidPassword(passwordField.getText()),
+                                passwordField.textProperty()))
+                        .or(Bindings.createBooleanBinding(() -> !isValidPassword(passwordConfirmField.getText()),
+                                passwordConfirmField.textProperty())
+                                .or(Bindings.createBooleanBinding(() -> !passwordConfirmField.getText()
+                                        .equals(passwordField.getText()), passwordConfirmField.textProperty()))));
 
         Hyperlink loginLink = new Hyperlink("Avez-vous déjà un compte? Connectez-vous");
 
@@ -321,10 +363,12 @@ public class App extends Application {
         grid.add(usernameField, 0, 2);
         grid.add(passwordLabel, 0, 3);
         grid.add(passwordField, 0, 4);
-        grid.add(passwordConfirmLabel, 0, 5);
-        grid.add(passwordConfirmField, 0, 6);
-        grid.add(registerButton, 0, 7);
-        grid.add(loginLink, 0, 8);
+        grid.add(passwordErrorLabel, 0, 5);
+        grid.add(passwordConfirmLabel, 0, 6);
+        grid.add(passwordConfirmField, 0, 7);
+        grid.add(passwordConfirmationErrorLabel, 0, 8);
+        grid.add(registerButton, 0, 9);
+        grid.add(loginLink, 0, 10);
 
         Scene scene = new Scene(grid, 640, 480);
         stage.setScene(scene);
