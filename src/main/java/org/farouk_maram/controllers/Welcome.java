@@ -6,7 +6,6 @@ import org.farouk_maram.Authentication.Authenticate;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
@@ -19,7 +18,7 @@ public class Welcome extends App {
 
   public Scene getScene() {
 
-    Button livresButton = new Button("Livre");
+    Button livresButton = new Button("Livres");
     livresButton.setOnAction(event -> {
       changeScencesToHomeLivre();
     });
@@ -89,8 +88,9 @@ public class Welcome extends App {
     }
     usernameText.setStyle("-fx-fill: #040f16; -fx-font-weight: bold;");
     usernameText.setFont(new javafx.scene.text.Font(30));
-    Text title = new Text("Welcome to the library management system!");
-    Text subTitle = new Text("Here you can manage the books, the borrows and the users.");
+    Text title = new Text("Bienvenue dans le système de gestion de bibliothèque!");
+    Text subTitle = new Text("Ici vous pouvez gérer les livres, les emprunts et les usagers.");
+
     subTitle.setStyle("-fx-fill: #0b4f6c;");
 
     subTitle.setFont(new javafx.scene.text.Font(15));
@@ -117,31 +117,5 @@ public class Welcome extends App {
     return scene;
 
   }
-  // public Scene getScene() {
-  // Button livresButton = new Button("livres");
-  // livresButton.setOnAction(event -> {
-  // // open the books page
-  // });
-  // Button usagersButton = new Button("usagers");
-  // usagersButton.setOnAction(event -> {
-  // // open the usagers page
-  // });
-  // Button empruntsButton = new Button("emprunts");
-  // livresButton.setOnAction(event -> {
-  // // open the borrows page
-  // });
-  // empruntsButton.setStyle("-fx-margin: 10; -fx-padding: 5;");
 
-  // VBox root = new VBox(
-  // new Text("Welcome to the library management system!"),
-  // new Text("Here you can manage the books, the borrows and the users."),
-  // livresButton,
-  // empruntsButton,
-  // usagersButton);
-  // root.setPadding(new Insets(10, 10, 10, 10));
-  // root.setSpacing(10);
-  // Scene scene = new Scene(root);
-  // return scene;
-
-  // }
 }

@@ -12,6 +12,9 @@ import org.farouk_maram.utils.SubmitFailAlert;
 
 import de.mkammerer.argon2.Argon2;
 import de.mkammerer.argon2.Argon2Factory;
+import javafx.beans.binding.Bindings;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -53,20 +56,79 @@ public class Login extends App {
     grid.setPadding(new Insets(5, 5, 5, 5));
 
     Text scenetitle = new Text("Login");
+    scenetitle.setStyle("-fx-font-weight: bold; -fx-fill: #040f16; -fx-margin: 10; -fx-padding: 5;");
     scenetitle.setFont(Font.font("Sans-serif", 100));
 
-    Label usernameLabel = new Label("Username");
-    TextField usernameField = new TextField();
+    Label usernameLabel = new Label("Nom d'utilisateur");
+    usernameLabel.setStyle("-fx-text-fill: #0b4f6c;");
 
-    Label passwordLabel = new Label("Password");
+    TextField usernameField = new TextField();
+    usernameField.setStyle(
+        " -fx-background-color: -fx-text-box-border, -fx-background ; -fx-background-insets: 0, 0 0 1 0 ; -fx-background-radius: 0 ;");
+
+    usernameField.focusedProperty().addListener(new ChangeListener<Boolean>() {
+      @Override
+      public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+        if (newValue) {
+          usernameField.setStyle(
+              "-fx-background-color: -fx-focus-color, -fx-background ; -fx-background-insets: 0, 0 0 1 0 ; -fx-background-radius: 0 ;");
+        } else {
+          usernameField.setStyle(
+              " -fx-background-color: -fx-text-box-border, -fx-background ; -fx-background-insets: 0, 0 0 1 0 ; -fx-background-radius: 0 ;");
+        }
+      }
+
+    });
+
+    Label passwordLabel = new Label("Mot de passe");
+    passwordLabel.setStyle("-fx-text-fill: #0b4f6c;");
+
     PasswordField passwordField = new PasswordField();
+
+    passwordField.setStyle(
+        " -fx-background-color: -fx-text-box-border, -fx-background ; -fx-background-insets: 0, 0 0 1 0 ; -fx-background-radius: 0 ;");
+
+    passwordField.focusedProperty().addListener(new ChangeListener<Boolean>() {
+      @Override
+      public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+        if (newValue) {
+          passwordField.setStyle(
+              "-fx-background-color: -fx-focus-color, -fx-background ; -fx-background-insets: 0, 0 0 1 0 ; -fx-background-radius: 0 ;");
+        } else {
+          passwordField.setStyle(
+              " -fx-background-color: -fx-text-box-border, -fx-background ; -fx-background-insets: 0, 0 0 1 0 ; -fx-background-radius: 0 ;");
+        }
+      }
+
+    });
 
     Tooltip tooltip = new Tooltip();
     tooltip.setShowDelay(Duration.ZERO);
 
-    Button loginButton = new Button("Login");
+    Button loginButton = new Button("Se connecter");
 
-    Hyperlink registerLink = new Hyperlink("Is this your first time here? Register now!");
+    loginButton.setStyle(
+        "-fx-background-color: #1e293b; -fx-border-color: #475569; -fx-text-fill: #fbfbff; -fx-margin: 10; -fx-padding: 5; -fx-font-size: 20; -fx-min-width: 200; -fx-border-radius: 5; -fx-background-radius: 5;");
+
+    // add on hover effect to button and change background color to 040F16
+    loginButton.setOnMouseEntered(event -> {
+      // add cursor pointer
+      loginButton.setStyle(
+          "-fx-background-color: #475569; -fx-border-color: #475569; -fx-text-fill: #fbfbff; -fx-margin: 10; -fx-padding: 5; -fx-font-size: 20; -fx-min-width: 200; -fx-border-radius: 5; -fx-background-radius: 5; -fx-cursor: hand;");
+
+    });
+
+    // remove effect when mouse is not on button
+    loginButton.setOnMouseExited(event -> {
+      loginButton.setStyle(
+          "-fx-background-color: #1e293b; -fx-border-color: #475569; -fx-text-fill: #fbfbff; -fx-margin: 10; -fx-padding: 5; -fx-font-size: 20; -fx-min-width: 200; -fx-border-radius: 5; -fx-background-radius: 5;");
+    });
+
+    loginButton.disableProperty().bind(
+        Bindings.isEmpty(usernameField.textProperty())
+            .or(Bindings.isEmpty(passwordField.textProperty())));
+
+    Hyperlink registerLink = new Hyperlink("Est-ce votre première visite? Inscrivez-vous maintenant!");
 
     // password check
     validator.createCheck()
@@ -74,9 +136,10 @@ public class Login extends App {
         .withMethod(c -> {
           String password = c.get("password");
           if (!isValidPassword(password)) {
-            tooltip.setText("Password must contain digits and numbers and be at least 8 characters long");
+            tooltip.setText(
+                "Le mot de passe doit contenir des chiffres et des lettres et faire au moins 8 caractères de long");
             Tooltip.install(passwordField, tooltip);
-            c.error("Password must contain digits and numbers and be at least 8 characters long");
+            c.error("Le mot de passe doit contenir des chiffres et des lettres et faire au moins 8 caractères de long");
           } else {
             Tooltip.uninstall(passwordField, tooltip);
           }
@@ -92,7 +155,6 @@ public class Login extends App {
           alert.showAlert("Login");
           return;
         }
-        System.out.println("Login button clicked");
         Database db = new Database();
         try {
           db.connect();
@@ -107,23 +169,18 @@ public class Login extends App {
           if (rs.next()) {
             boolean passwordMatches = argon2.verify(rs.getString("password"), passwordField.getText().toCharArray());
             if (passwordMatches) {
-              System.out.println("password matches");
               Authenticate.login(usernameField.getText());
-              System.out.println("is logged in: " + Authenticate.isLoggedIn());
-              System.out.println("username is: " + Authenticate.getUsername());
-
+              changeScencesToWelcome();
             } else {
-              System.out.println("Login failed");
               SubmitFailAlert alert = new SubmitFailAlert();
               alert.showAlert("Login");
             }
           } else {
-            System.out.println("Login failed");
             // user already exists
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Error");
-            alert.setHeaderText("Username does not exist");
-            alert.setContentText("Please register first or try again");
+            alert.setHeaderText("Le nom d'utilisateur n'existe pas");
+            alert.setContentText("S'il vous plaît réessayer ou créer un nouveau compte");
             alert.showAndWait();
           }
         } catch (SQLException e) {
@@ -135,10 +192,6 @@ public class Login extends App {
     registerLink.setOnAction(new EventHandler<ActionEvent>() {
       @Override
       public void handle(ActionEvent actionEvent) {
-        System.out.println("is logged in before logging out: " + Authenticate.isLoggedIn());
-        Authenticate.logout();
-        System.out.println("is logged in after logging out: " + Authenticate.isLoggedIn());
-        // temporarly change this to test the search
         changeScencesToRegister();
       }
     });

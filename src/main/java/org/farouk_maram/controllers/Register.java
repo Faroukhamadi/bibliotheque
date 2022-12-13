@@ -8,11 +8,9 @@ import java.sql.PreparedStatement;
 import org.farouk_maram.App;
 import org.farouk_maram.Authentication.Authenticate;
 import org.farouk_maram.db.Database;
-import org.farouk_maram.utils.SubmitFailAlert;
 
 import de.mkammerer.argon2.Argon2;
 import de.mkammerer.argon2.Argon2Factory;
-import javafx.beans.binding.Binding;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -48,16 +46,16 @@ public class Register extends App {
     Scene scene = new Scene(stackPane, 640, 480);
 
     GridPane grid = new GridPane();
-    stage.setTitle("Register");
+    stage.setTitle("Inscription");
     grid.setAlignment(javafx.geometry.Pos.CENTER);
     grid.setHgap(10);
     grid.setVgap(10);
 
-    Text scenetitle = new Text("Register");
+    Text scenetitle = new Text("Inscription");
     scenetitle.setStyle("-fx-font-weight: bold; -fx-fill: #040f16; -fx-margin: 10; -fx-padding: 5;");
     scenetitle.setFont(Font.font("Sans-serif", 100));
 
-    Label usernameLabel = new Label("Username");
+    Label usernameLabel = new Label("Nom d'utilisateur");
 
     usernameLabel.setStyle("-fx-text-fill: #0b4f6c;");
 
@@ -79,7 +77,7 @@ public class Register extends App {
 
     });
 
-    Label passwordLabel = new Label("Password");
+    Label passwordLabel = new Label("Mot de passe");
 
     passwordLabel.setStyle("-fx-text-fill: #0b4f6c;");
 
@@ -101,7 +99,7 @@ public class Register extends App {
 
     });
 
-    Label passwordConfirmLabel = new Label("Password Confirm");
+    Label passwordConfirmLabel = new Label("Confirmation du mot de passe");
 
     passwordConfirmLabel.setStyle("-fx-text-fill: #0b4f6c;");
 
@@ -126,7 +124,7 @@ public class Register extends App {
     Tooltip tooltip = new Tooltip();
     tooltip.setShowDelay(Duration.ZERO);
 
-    Button registerButton = new Button("Register");
+    Button registerButton = new Button("S'inscrire");
     registerButton.setStyle(
         "-fx-background-color: #1e293b; -fx-border-color: #475569; -fx-text-fill: #fbfbff; -fx-margin: 10; -fx-padding: 5; -fx-font-size: 20; -fx-min-width: 200; -fx-border-radius: 5; -fx-background-radius: 5;");
 
@@ -149,7 +147,7 @@ public class Register extends App {
             .or(Bindings.isEmpty(passwordField.textProperty()))
             .or(Bindings.isEmpty(passwordConfirmField.textProperty())));
 
-    Hyperlink loginLink = new Hyperlink("Already have an account? Login");
+    Hyperlink loginLink = new Hyperlink("Avez-vous déjà un compte? Connectez-vous");
 
     loginLink.setOnAction(new EventHandler<ActionEvent>() {
       @Override
@@ -158,44 +156,47 @@ public class Register extends App {
       }
     });
 
+    // password confirmation check
+    validator.createCheck()
+        .dependsOn("password-confirm", passwordConfirmField.textProperty())
+        .withMethod(c -> {
+          String passwordConfirm = c.get("password-confirm");
+          if (!isValidPassword(passwordConfirm) || !passwordConfirm.equals(passwordField.getText())
+              || passwordConfirm.isEmpty()) {
+            tooltip.setText("La confirmation du mot de passe doit correspondre au mot de passe");
+            Tooltip.install(passwordConfirmField, tooltip);
+            c.error("La confirmation du mot de passe doit correspondre au mot de passe");
+          } else {
+            Tooltip.uninstall(passwordConfirmField, tooltip);
+          }
+        }).decorates(passwordConfirmField)
+        .immediate();
     // password check
     validator.createCheck()
         .dependsOn("password", passwordField.textProperty())
         .withMethod(c -> {
           String password = c.get("password");
           if (!isValidPassword(password)) {
-            tooltip.setText("Password must contain digits and numbers and be at least 8 characters long");
+            tooltip.setText(
+                "Le mot de passe doit contenir des chiffres et des lettres et faire au moins 8 caractères de long");
             Tooltip.install(passwordField, tooltip);
-            c.error("Password must contain digits and numbers and be at least 8 characters long");
+            c.error("Le mot de passe doit contenir des chiffres et des lettres et faire au moins 8 caractères de long");
           } else {
             Tooltip.uninstall(passwordField, tooltip);
           }
         }).decorates(passwordField)
         .immediate();
-
-    // password confirmation check
-    validator.createCheck()
-        .dependsOn("password-confirm", passwordConfirmField.textProperty())
-        .withMethod(c -> {
-          String passwordConfirm = c.get("password-confirm");
-          if (!passwordConfirm.equals(passwordField.getText())) {
-            tooltip.setText("Password confirm must match password");
-            Tooltip.install(passwordConfirmField, tooltip);
-            c.error("Password Confirm must match Password");
-          } else {
-            Tooltip.uninstall(passwordConfirmField, tooltip);
-          }
-        }).decorates(passwordConfirmField)
-        .immediate();
-
     registerButton.setOnAction(new EventHandler<ActionEvent>() {
       @Override
       public void handle(ActionEvent event) {
         // enum for validation
         ValidationResult result = validator.getValidationResult();
         if (result.getMessages().size() > 0) {
-          SubmitFailAlert alert = new SubmitFailAlert();
-          alert.showAlert("Register");
+          Alert alert = new Alert(Alert.AlertType.ERROR);
+          alert.setTitle("Inscription");
+          alert.setTitle("Inscription");
+          alert.setContentText("Inscription échouée");
+          alert.showAndWait();
           return;
         }
 
@@ -214,7 +215,7 @@ public class Register extends App {
           insertStatement.setString(2, hash);
           insertStatement.executeUpdate();
           Authenticate.login(usernameField.getText());
-          // TODO: change schenes after creating user
+          changeScencesToWelcome();
 
         } catch (SQLException e) {
           // use error codes to distinguish between different errors
@@ -222,8 +223,8 @@ public class Register extends App {
             // user already exists
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Error");
-            alert.setHeaderText("Username already taken");
-            alert.setContentText("Please choose another username");
+            alert.setHeaderText("Le nom d'utilisateur existe déjà");
+            alert.setContentText("Veuillez choisir un autre nom d'utilisateur");
             alert.showAndWait();
           } else {
             e.printStackTrace();

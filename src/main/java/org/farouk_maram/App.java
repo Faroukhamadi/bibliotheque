@@ -119,7 +119,7 @@ public class App extends Application {
     public void start(Stage stage) {
         this.stage = stage;
 
-        stage.setTitle("Register");
+        stage.setTitle("Inscription");
         GridPane grid = new GridPane();
         grid.setAlignment(javafx.geometry.Pos.CENTER);
         grid.setHgap(10);
@@ -131,11 +131,11 @@ public class App extends Application {
         vbox.setPadding(new Insets(10, 10, 10, 10));
         vbox.setSpacing(10);
 
-        Text scenetitle = new Text("Register");
+        Text scenetitle = new Text("Inscription");
         scenetitle.setStyle("-fx-font-weight: bold; -fx-fill: #040f16; -fx-margin: 10; -fx-padding: 5;");
         scenetitle.setFont(Font.font("Sans-serif", 100));
 
-        Label usernameLabel = new Label("Username");
+        Label usernameLabel = new Label("Nom d'utilisateur");
 
         usernameLabel.setStyle("-fx-text-fill: #0b4f6c;");
 
@@ -157,7 +157,7 @@ public class App extends Application {
 
         });
 
-        Label passwordLabel = new Label("Password");
+        Label passwordLabel = new Label("Mot de passe");
 
         passwordLabel.setStyle("-fx-text-fill: #0b4f6c;");
 
@@ -179,7 +179,7 @@ public class App extends Application {
 
         });
 
-        Label passwordConfirmLabel = new Label("Password Confirm");
+        Label passwordConfirmLabel = new Label("Confirmation du mot de passe");
 
         passwordConfirmLabel.setStyle("-fx-text-fill: #0b4f6c;");
 
@@ -204,7 +204,7 @@ public class App extends Application {
         Tooltip tooltip = new Tooltip();
         tooltip.setShowDelay(Duration.ZERO);
 
-        Button registerButton = new Button("Register");
+        Button registerButton = new Button("S'inscrire");
         registerButton.setStyle(
                 "-fx-background-color: #1e293b; -fx-border-color: #475569; -fx-text-fill: #fbfbff; -fx-margin: 10; -fx-padding: 5; -fx-font-size: 20; -fx-min-width: 200; -fx-border-radius: 5; -fx-background-radius: 5;");
 
@@ -227,7 +227,7 @@ public class App extends Application {
                         .or(Bindings.isEmpty(passwordField.textProperty()))
                         .or(Bindings.isEmpty(passwordConfirmField.textProperty())));
 
-        Hyperlink loginLink = new Hyperlink("Already have an account? Login");
+        Hyperlink loginLink = new Hyperlink("Avez-vous déjà un compte? Connectez-vous");
 
         loginLink.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -243,9 +243,9 @@ public class App extends Application {
                     String passwordConfirm = c.get("password-confirm");
                     if (!isValidPassword(passwordConfirm) || !passwordConfirm.equals(passwordField.getText())
                             || passwordConfirm.isEmpty()) {
-                        tooltip.setText("Password confirm must match password");
+                        tooltip.setText("La confirmation du mot de passe doit correspondre au mot de passe");
                         Tooltip.install(passwordConfirmField, tooltip);
-                        c.error("Password Confirm must match Password");
+                        c.error("La confirmation du mot de passe doit correspondre au mot de passe");
                     } else {
                         Tooltip.uninstall(passwordConfirmField, tooltip);
                     }
@@ -257,9 +257,10 @@ public class App extends Application {
                 .withMethod(c -> {
                     String password = c.get("password");
                     if (!isValidPassword(password)) {
-                        tooltip.setText("Password must contain digits and numbers and be at least 8 characters long");
+                        tooltip.setText(
+                                "Le mot de passe doit contenir des chiffres et des lettres et faire au moins 8 caractères de long");
                         Tooltip.install(passwordField, tooltip);
-                        c.error("Password must contain digits and numbers and be at least 8 characters long");
+                        c.error("Le mot de passe doit contenir des chiffres et des lettres et faire au moins 8 caractères de long");
                     } else {
                         Tooltip.uninstall(passwordField, tooltip);
                     }
@@ -273,9 +274,9 @@ public class App extends Application {
                 ValidationResult result = validator.getValidationResult();
                 if (result.getMessages().size() > 0) {
                     Alert alert = new Alert(Alert.AlertType.ERROR);
-                    alert.setTitle("Register");
-                    alert.setHeaderText("Register");
-                    alert.setContentText("Register Failed");
+                    alert.setTitle("Inscription");
+                    alert.setTitle("Inscription");
+                    alert.setContentText("Inscription échouée");
                     alert.showAndWait();
                     return;
                 }
@@ -304,8 +305,8 @@ public class App extends Application {
                         // user already exists
                         Alert alert = new Alert(Alert.AlertType.ERROR);
                         alert.setTitle("Error");
-                        alert.setHeaderText("Username already taken");
-                        alert.setContentText("Please choose another username");
+                        alert.setHeaderText("Le nom d'utilisateur existe déjà");
+                        alert.setContentText("Veuillez choisir un autre nom d'utilisateur");
                         alert.showAndWait();
                     } else {
                         e.printStackTrace();
