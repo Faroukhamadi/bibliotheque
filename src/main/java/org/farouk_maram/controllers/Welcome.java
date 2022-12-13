@@ -62,23 +62,43 @@ public class Welcome extends App {
           "-fx-background-color: #1e293b; -fx-border-color: #475569; -fx-text-fill: #fbfbff; -fx-margin: 10; -fx-padding: 5; -fx-font-size: 20; -fx-min-width: 200; -fx-border-radius: 5; -fx-background-radius: 5;");
     });
 
-    Button empruntsButton = new Button("Emprunts");
-    livresButton.setOnAction(event -> {
-      changeScencesToHomeEmprunt();
+    Button empruntsEnCoursButton = new Button("Emprunts En Cours");
+    empruntsEnCoursButton.setOnAction(event -> {
+      changeScencesToEnCoursEmprunts();
     });
 
-    empruntsButton.setStyle(
+    empruntsEnCoursButton.setStyle(
         "-fx-background-color: #1e293b; -fx-border-color: #040f16; -fx-text-fill: #fbfbff; -fx-margin: 10; -fx-padding: 5; -fx-font-size: 20; -fx-min-width: 200; -fx-border-radius: 5; -fx-background-radius: 5;");
 
     // add on hover effect to button and change background color to 040F16
-    empruntsButton.setOnMouseEntered(event -> {
-      empruntsButton.setStyle(
+    empruntsEnCoursButton.setOnMouseEntered(event -> {
+      empruntsEnCoursButton.setStyle(
           "-fx-background-color: #475569; -fx-border-color: #475569; -fx-text-fill: #fbfbff; -fx-margin: 10; -fx-padding: 5; -fx-font-size: 20; -fx-min-width: 200; -fx-border-radius: 5; -fx-background-radius: 5; -fx-cursor: hand;");
     });
 
     // remove effect when mouse is not on button
-    empruntsButton.setOnMouseExited(event -> {
-      empruntsButton.setStyle(
+    empruntsEnCoursButton.setOnMouseExited(event -> {
+      empruntsEnCoursButton.setStyle(
+          "-fx-background-color: #1e293b; -fx-border-color: #475569; -fx-text-fill: #fbfbff; -fx-margin: 10; -fx-padding: 5; -fx-font-size: 20; -fx-min-width: 200; -fx-border-radius: 5; -fx-background-radius: 5;");
+    });
+
+    Button HistoriqueEmpruntsButton = new Button("Historique Emprunts");
+    HistoriqueEmpruntsButton.setOnAction(event -> {
+      changeScencesToHistoriqueEmprunts();
+    });
+
+    HistoriqueEmpruntsButton.setStyle(
+        "-fx-background-color: #1e293b; -fx-border-color: #040f16; -fx-text-fill: #fbfbff; -fx-margin: 10; -fx-padding: 5; -fx-font-size: 20; -fx-min-width: 200; -fx-border-radius: 5; -fx-background-radius: 5;");
+
+    // add on hover effect to button and change background color to 040F16
+    HistoriqueEmpruntsButton.setOnMouseEntered(event -> {
+      HistoriqueEmpruntsButton.setStyle(
+          "-fx-background-color: #475569; -fx-border-color: #475569; -fx-text-fill: #fbfbff; -fx-margin: 10; -fx-padding: 5; -fx-font-size: 20; -fx-min-width: 200; -fx-border-radius: 5; -fx-background-radius: 5; -fx-cursor: hand;");
+    });
+
+    // remove effect when mouse is not on button
+    HistoriqueEmpruntsButton.setOnMouseExited(event -> {
+      HistoriqueEmpruntsButton.setStyle(
           "-fx-background-color: #1e293b; -fx-border-color: #475569; -fx-text-fill: #fbfbff; -fx-margin: 10; -fx-padding: 5; -fx-font-size: 20; -fx-min-width: 200; -fx-border-radius: 5; -fx-background-radius: 5;");
     });
 
@@ -102,7 +122,7 @@ public class Welcome extends App {
     textContainer.setPadding(new Insets(10, 10, 10, 10));
     textContainer.setSpacing(10);
 
-    VBox buttonsContainer = new VBox(livresButton, empruntsButton, usagersButton);
+    VBox buttonsContainer = new VBox(livresButton, usagersButton, HistoriqueEmpruntsButton, empruntsEnCoursButton);
     buttonsContainer.setStyle("-fx-alignment: center; -fx-background-color: #fbfbff;");
     buttonsContainer.setPadding(new Insets(10, 10, 10, 10));
     buttonsContainer.setSpacing(10);

@@ -8,6 +8,8 @@ import java.sql.Statement;
 
 import org.farouk_maram.Authentication.Authenticate;
 import org.farouk_maram.controllers.HomeEmprunt;
+import org.farouk_maram.controllers.HomeEmpruntEnCours;
+import org.farouk_maram.controllers.HomeEmpruntHistory;
 import org.farouk_maram.controllers.HomeLivre;
 import org.farouk_maram.controllers.HomeUsager;
 import org.farouk_maram.controllers.Login;
@@ -56,6 +58,22 @@ public class App extends Application {
     public void changeScencesToHomeLivre() {
         HomeLivre homeLivre = new HomeLivre(stage);
         Scene scene = homeLivre.getScene();
+
+        stage.setTitle("Welcome");
+        stage.setScene(scene);
+    }
+
+    public void changeScencesToHistoriqueEmprunts() {
+        HomeEmpruntHistory homeEmprunt = new HomeEmpruntHistory(stage);
+        Scene scene = homeEmprunt.getScene();
+
+        stage.setTitle("Welcome");
+        stage.setScene(scene);
+    }
+
+    public void changeScencesToEnCoursEmprunts() {
+        HomeEmpruntEnCours homeEmprunt = new HomeEmpruntEnCours(stage);
+        Scene scene = homeEmprunt.getScene();
 
         stage.setTitle("Welcome");
         stage.setScene(scene);

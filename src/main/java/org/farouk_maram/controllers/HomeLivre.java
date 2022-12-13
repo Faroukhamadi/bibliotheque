@@ -20,6 +20,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -547,12 +548,20 @@ public class HomeLivre extends App implements HomeCRUD<Livre> {
             }
         });
 
+        Hyperlink link = new Hyperlink("<- Back to welcome page");
+        link.setStyle("-fx-text-fill: #040f16; -fx-margin: 10; -fx-padding: 5;");
+        link.setFont(new Font("Arial", 20));
+        link.setOnAction(e -> {
+            changeScencesToWelcome();
+        });
+
         HBox hBox = new HBox(choiceBox, textField);
         hBox.setAlignment(Pos.CENTER);
         final VBox vbox = new VBox();
         vbox.setSpacing(5);
         vbox.setPadding(new Insets(10, 0, 0, 10));
-        vbox.getChildren().addAll(label, table, hBox, addButton, editButton, deleteButton, deleteExemplaireButton);
+        vbox.getChildren().addAll(label, table, hBox, addButton, editButton, deleteButton, deleteExemplaireButton,
+                link);
 
         StackPane root = (StackPane) scene.getRoot();
         root.getChildren().addAll(vbox);

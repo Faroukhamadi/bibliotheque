@@ -20,9 +20,8 @@ import javafx.collections.transformation.FilteredList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -32,7 +31,6 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 // change select query to sort by date
@@ -229,116 +227,17 @@ public class HomeEmpruntHistory extends App implements HomeCRUD<Emprunt> {
       }
     });
 
-    Button addButton = new Button("Add");
-
-    addButton.setOnAction(e -> {
-      Stage dialog = new Stage();
-
-      dialog.initModality(Modality.APPLICATION_MODAL);
-      dialog.setTitle("Add a book");
-      dialog.setMinWidth(400);
-      dialog.setMinHeight(400);
-      Label label1 = new Label("Date Emprunt");
-      TextField textField1 = new TextField();
-      Label label2 = new Label("Email");
-      TextField textField2 = new TextField();
-      Label label3 = new Label("Isbn");
-      TextField textField3 = new TextField();
-
-      Button button = new Button("Add");
-
-      VBox vBox = new VBox(label1, textField1, label2, textField2, label3, textField3, button);
-
-      Scene myDialogScene = new Scene(vBox);
-
-      button.setOnAction(e1 -> {
-
-        String dateEmprunt = textField1.getText();
-        String email = textField2.getText();
-        String isbn = textField3.getText();
-
-        int idLivre = -1;
-        int idUsager = -1;
-        // fetch id of livre by isbn from database
-        Database db = new Database();
-        try {
-          db.connect();
-          Connection conn = db.getConn();
-          PreparedStatement ps = conn.prepareStatement("SELECT id_livre FROM livre WHERE isbn = ?");
-          PreparedStatement ps1 = conn.prepareStatement("SELECT id_usager FROM usager WHERE email = ?");
-
-          ps.setString(1, isbn);
-          ps1.setString(1, email);
-
-          ResultSet rs = ps.executeQuery();
-          ResultSet rs1 = ps1.executeQuery();
-          if (rs.next()) {
-            idLivre = rs.getInt("id_livre");
-            if (rs1.next()) {
-              idUsager = rs1.getInt("id_usager");
-            }
-          }
-        } catch (SQLException e2) {
-          e2.printStackTrace();
-        }
-
-        if (idLivre == -1) {
-          Alert alert = new Alert(Alert.AlertType.ERROR);
-          alert.setTitle("Error");
-          alert.setHeaderText("Livre not found");
-          alert.setContentText("Livre with isbn " + isbn + " not found");
-          alert.showAndWait();
-          return;
-        } else if (idUsager == -1) {
-          Alert alert = new Alert(Alert.AlertType.ERROR);
-          alert.setTitle("Error");
-          alert.setHeaderText("Usager not found");
-          alert.setContentText("Usager with email " + email + " not found");
-          alert.showAndWait();
-          return;
-        }
-
-        Emprunt emprunt = new Emprunt(0, Date.valueOf(dateEmprunt), null, idLivre, idUsager);
-
-        int id = addOne(emprunt);
-        emprunt.setId(id);
-
-        // select livre.titre, livre.auteur from livre where livre.id_livre =
-        // emprunt.id_livre;
-        String titre = "";
-        String auteur = "";
-        try {
-          db.connect();
-          Connection conn = db.getConn();
-          PreparedStatement ps = conn.prepareStatement(
-              "SELECT titre, auteur FROM livre WHERE id_livre = ?");
-          ps.setInt(1, idLivre);
-          ResultSet rs = ps.executeQuery();
-          if (rs.next()) {
-            titre = rs.getString("titre");
-            auteur = rs.getString("auteur");
-          }
-        } catch (SQLException e2) {
-          e2.printStackTrace();
-        }
-
-        EmpruntForHome empruntForHome = new EmpruntForHome(emprunt, titre, auteur, isbn, email);
-
-        emprunts.add(empruntForHome);
-        dialog.close();
-      });
-
-      dialog.setScene(myDialogScene);
-      dialog.show();
-
-    });
-
-    // disable button if no row is selected and enable if a row is selected
-
     choiceBox.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {// reset table and
       if (newVal != null) {
         textField.setText("");
       }
+    });
+
+    Hyperlink link = new Hyperlink("<- Back to welcome page");
+    link.setStyle("-fx-text-fill: #040f16; -fx-margin: 10; -fx-padding: 5;");
+    link.setFont(new Font("Arial", 20));
+    link.setOnAction(e -> {
+      changeScencesToWelcome();
     });
 
     HBox hBox = new HBox(choiceBox, textField);
@@ -346,7 +245,7 @@ public class HomeEmpruntHistory extends App implements HomeCRUD<Emprunt> {
     final VBox vbox = new VBox();
     vbox.setSpacing(5);
     vbox.setPadding(new Insets(10, 0, 0, 10));
-    vbox.getChildren().addAll(label, table, hBox, addButton);
+    vbox.getChildren().addAll(label, table, hBox, link);
 
     StackPane root = (StackPane) scene.getRoot();
     root.getChildren().addAll(vbox);
