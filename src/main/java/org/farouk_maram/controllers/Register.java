@@ -2,6 +2,7 @@ package org.farouk_maram.controllers;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+
 import java.sql.PreparedStatement;
 
 import org.farouk_maram.App;
@@ -11,6 +12,10 @@ import org.farouk_maram.utils.SubmitFailAlert;
 
 import de.mkammerer.argon2.Argon2;
 import de.mkammerer.argon2.Argon2Factory;
+import javafx.beans.binding.Binding;
+import javafx.beans.binding.Bindings;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
@@ -49,28 +54,107 @@ public class Register extends App {
     grid.setVgap(10);
 
     Text scenetitle = new Text("Register");
+    scenetitle.setStyle("-fx-font-weight: bold; -fx-fill: #040f16; -fx-margin: 10; -fx-padding: 5;");
     scenetitle.setFont(Font.font("Sans-serif", 100));
 
     Label usernameLabel = new Label("Username");
+
+    usernameLabel.setStyle("-fx-text-fill: #0b4f6c;");
+
     TextField usernameField = new TextField();
 
+    usernameField.setStyle(
+        " -fx-background-color: -fx-text-box-border, -fx-background ; -fx-background-insets: 0, 0 0 1 0 ; -fx-background-radius: 0 ;");
+    usernameField.focusedProperty().addListener(new ChangeListener<Boolean>() {
+      @Override
+      public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+        if (newValue) {
+          usernameField.setStyle(
+              "-fx-background-color: -fx-focus-color, -fx-background ; -fx-background-insets: 0, 0 0 1 0 ; -fx-background-radius: 0 ;");
+        } else {
+          usernameField.setStyle(
+              " -fx-background-color: -fx-text-box-border, -fx-background ; -fx-background-insets: 0, 0 0 1 0 ; -fx-background-radius: 0 ;");
+        }
+      }
+
+    });
+
     Label passwordLabel = new Label("Password");
+
+    passwordLabel.setStyle("-fx-text-fill: #0b4f6c;");
+
     PasswordField passwordField = new PasswordField();
 
+    passwordField.setStyle(
+        " -fx-background-color: -fx-text-box-border, -fx-background ; -fx-background-insets: 0, 0 0 1 0 ; -fx-background-radius: 0 ;");
+    passwordField.focusedProperty().addListener(new ChangeListener<Boolean>() {
+      @Override
+      public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+        if (newValue) {
+          passwordField.setStyle(
+              "-fx-background-color: -fx-focus-color, -fx-background ; -fx-background-insets: 0, 0 0 1 0 ; -fx-background-radius: 0 ;");
+        } else {
+          passwordField.setStyle(
+              " -fx-background-color: -fx-text-box-border, -fx-background ; -fx-background-insets: 0, 0 0 1 0 ; -fx-background-radius: 0 ;");
+        }
+      }
+
+    });
+
     Label passwordConfirmLabel = new Label("Password Confirm");
+
+    passwordConfirmLabel.setStyle("-fx-text-fill: #0b4f6c;");
+
     PasswordField passwordConfirmField = new PasswordField();
+
+    passwordConfirmField.setStyle(
+        " -fx-background-color: -fx-text-box-border, -fx-background ; -fx-background-insets: 0, 0 0 1 0 ; -fx-background-radius: 0 ;");
+    passwordConfirmField.focusedProperty().addListener(new ChangeListener<Boolean>() {
+      @Override
+      public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+        if (newValue) {
+          passwordConfirmField.setStyle(
+              "-fx-background-color: -fx-focus-color, -fx-background ; -fx-background-insets: 0, 0 0 1 0 ; -fx-background-radius: 0 ;");
+        } else {
+          passwordConfirmField.setStyle(
+              " -fx-background-color: -fx-text-box-border, -fx-background ; -fx-background-insets: 0, 0 0 1 0 ; -fx-background-radius: 0 ;");
+        }
+      }
+
+    });
 
     Tooltip tooltip = new Tooltip();
     tooltip.setShowDelay(Duration.ZERO);
 
     Button registerButton = new Button("Register");
+    registerButton.setStyle(
+        "-fx-background-color: #1e293b; -fx-border-color: #475569; -fx-text-fill: #fbfbff; -fx-margin: 10; -fx-padding: 5; -fx-font-size: 20; -fx-min-width: 200; -fx-border-radius: 5; -fx-background-radius: 5;");
+
+    // add on hover effect to button and change background color to 040F16
+    registerButton.setOnMouseEntered(event -> {
+      // add cursor pointer
+      registerButton.setStyle(
+          "-fx-background-color: #475569; -fx-border-color: #475569; -fx-text-fill: #fbfbff; -fx-margin: 10; -fx-padding: 5; -fx-font-size: 20; -fx-min-width: 200; -fx-border-radius: 5; -fx-background-radius: 5; -fx-cursor: hand;");
+
+    });
+
+    // remove effect when mouse is not on button
+    registerButton.setOnMouseExited(event -> {
+      registerButton.setStyle(
+          "-fx-background-color: #1e293b; -fx-border-color: #475569; -fx-text-fill: #fbfbff; -fx-margin: 10; -fx-padding: 5; -fx-font-size: 20; -fx-min-width: 200; -fx-border-radius: 5; -fx-background-radius: 5;");
+    });
+
+    registerButton.disableProperty().bind(
+        Bindings.isEmpty(usernameField.textProperty())
+            .or(Bindings.isEmpty(passwordField.textProperty()))
+            .or(Bindings.isEmpty(passwordConfirmField.textProperty())));
 
     Hyperlink loginLink = new Hyperlink("Already have an account? Login");
 
     loginLink.setOnAction(new EventHandler<ActionEvent>() {
       @Override
       public void handle(ActionEvent actionEvent) {
-        changeScences();
+        changeScencesToLogin();
       }
     });
 

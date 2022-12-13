@@ -150,7 +150,7 @@ public class AddLivre extends App {
         Authenticate.logout();
         System.out.println("is logged in after logging out: " + Authenticate.isLoggedIn());
         // temporarly change this to test the search
-        changeScences2();
+        changeScencesToRegister();
       }
     });
 
