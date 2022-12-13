@@ -234,7 +234,7 @@ public class HomeEmpruntEnCours extends App implements HomeCRUD<Emprunt> {
     });
 
     Button rendreButton = new Button("Rendre");
-    Button addButton = new Button("Add");
+    Button addButton = new Button("Ajouter");
 
     rendreButton.setDisable(true);
 
@@ -252,9 +252,13 @@ public class HomeEmpruntEnCours extends App implements HomeCRUD<Emprunt> {
       Label label3 = new Label("Isbn");
       TextField textField3 = new TextField();
 
-      Button button = new Button("Add");
+      Button button = new Button("Ajouter");
 
       VBox vBox = new VBox(label1, textField1, label2, textField2, label3, textField3, button);
+      // center the VBox
+      vBox.setAlignment(Pos.CENTER);
+      vBox.setSpacing(10);
+      vBox.setPadding(new Insets(10, 10, 10, 10));
 
       Scene myDialogScene = new Scene(vBox);
 
@@ -335,6 +339,8 @@ public class HomeEmpruntEnCours extends App implements HomeCRUD<Emprunt> {
         dialog.close();
       });
 
+      myDialogScene.getStylesheets().add(getClass().getResource("/style.css").toExternalForm());
+
       dialog.setScene(myDialogScene);
       dialog.show();
 
@@ -348,10 +354,15 @@ public class HomeEmpruntEnCours extends App implements HomeCRUD<Emprunt> {
       dialog.setMinWidth(400);
       dialog.setMinHeight(400);
 
-      Text text = new Text("The book is returned");
+      Text text = new Text("Le livre est rendu");
       text.setFont(Font.font("Verdana", FontWeight.BOLD, 20));
 
       VBox vBox = new VBox(text);
+
+      // center the VBox
+      vBox.setAlignment(Pos.CENTER);
+      vBox.setSpacing(10);
+      vBox.setPadding(new Insets(10, 10, 10, 10));
 
       Scene myDialogScene = new Scene(vBox);
 
@@ -373,6 +384,8 @@ public class HomeEmpruntEnCours extends App implements HomeCRUD<Emprunt> {
       emprunts.set(index, emprunt);
 
       dialog.close();
+
+      myDialogScene.getStylesheets().add(getClass().getResource("/style.css").toExternalForm());
 
       dialog.setScene(myDialogScene);
       dialog.show();
@@ -402,8 +415,9 @@ public class HomeEmpruntEnCours extends App implements HomeCRUD<Emprunt> {
 
     HBox hBox = new HBox(choiceBox, textField);
     hBox.setAlignment(Pos.CENTER);
+    hBox.setSpacing(10);
     final VBox vbox = new VBox();
-    vbox.setSpacing(5);
+    vbox.setSpacing(20);
     vbox.setPadding(new Insets(10, 0, 0, 10));
     vbox.getChildren().addAll(label, table, hBox, addButton, rendreButton, link);
 

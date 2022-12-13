@@ -125,7 +125,7 @@ public class Welcome extends App {
     VBox buttonsContainer = new VBox(livresButton, usagersButton, HistoriqueEmpruntsButton, empruntsEnCoursButton);
     buttonsContainer.setStyle("-fx-alignment: center; -fx-background-color: #fbfbff;");
     buttonsContainer.setPadding(new Insets(10, 10, 10, 10));
-    buttonsContainer.setSpacing(10);
+    buttonsContainer.setSpacing(20);
 
     VBox root = new VBox(textContainer, buttonsContainer);
 

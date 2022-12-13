@@ -227,9 +227,9 @@ public class HomeUsager extends App implements HomeCRUD<Usager> {
       }
     });
 
-    Button deleteButton = new Button("Delete");
-    Button editButton = new Button("Edit");
-    Button addButton = new Button("Add");
+    Button deleteButton = new Button("Supprimer");
+    Button editButton = new Button("Modifier");
+    Button addButton = new Button("Ajouter");
 
     editButton.setDisable(true);
     deleteButton.setDisable(true);
@@ -238,7 +238,7 @@ public class HomeUsager extends App implements HomeCRUD<Usager> {
       Stage dialog = new Stage();
 
       dialog.initModality(Modality.APPLICATION_MODAL);
-      dialog.setTitle("Add a book");
+      dialog.setTitle("Ajouter un Usager");
       dialog.setMinWidth(400);
       dialog.setMinHeight(400);
       Label label1 = new Label("Nom");
@@ -250,8 +250,13 @@ public class HomeUsager extends App implements HomeCRUD<Usager> {
       Label label4 = new Label("Statut");
       TextField textField4 = new TextField();
 
-      Button button = new Button("Add");
+      Button button = new Button("Ajouter");
       VBox vBox = new VBox(label1, textField1, label2, textField2, label3, textField3, label4, textField4, button);
+
+      // center the VBox
+      vBox.setAlignment(Pos.CENTER);
+      vBox.setSpacing(10);
+      vBox.setPadding(new Insets(10, 10, 10, 10));
 
       Scene myDialogScene = new Scene(vBox);
 
@@ -266,6 +271,8 @@ public class HomeUsager extends App implements HomeCRUD<Usager> {
         usagers.add(usager);
         dialog.close();
       });
+
+      myDialogScene.getStylesheets().add(getClass().getResource("/style.css").toExternalForm());
 
       dialog.setScene(myDialogScene);
       dialog.show();
@@ -292,6 +299,10 @@ public class HomeUsager extends App implements HomeCRUD<Usager> {
       statuts.setValue(table.getSelectionModel().getSelectedItem().getStatut().toString());
 
       VBox vBox = new VBox(label1, textField1, label2, textField2, label3, textField3, label4, statuts, button);
+      // center the VBox
+      vBox.setAlignment(Pos.CENTER);
+      vBox.setSpacing(10);
+      vBox.setPadding(new Insets(10, 10, 10, 10));
 
       Scene myDialogScene = new Scene(vBox);
 
@@ -305,6 +316,8 @@ public class HomeUsager extends App implements HomeCRUD<Usager> {
         usagers.set(usagers.indexOf(table.getSelectionModel().getSelectedItem()), usager);
         dialog.close();
       });
+
+      myDialogScene.getStylesheets().add(getClass().getResource("/style.css").toExternalForm());
 
       dialog.setScene(myDialogScene);
       dialog.show();
@@ -340,6 +353,8 @@ public class HomeUsager extends App implements HomeCRUD<Usager> {
         dialog.close();
       });
 
+      myDialogScene.getStylesheets().add(getClass().getResource("/style.css").toExternalForm());
+
       dialog.setScene(myDialogScene);
       dialog.show();
 
@@ -372,8 +387,9 @@ public class HomeUsager extends App implements HomeCRUD<Usager> {
 
     HBox hBox = new HBox(choiceBox, textField);
     hBox.setAlignment(Pos.CENTER);
+    hBox.setSpacing(10);
     final VBox vbox = new VBox();
-    vbox.setSpacing(5);
+    vbox.setSpacing(10);
     vbox.setPadding(new Insets(10, 0, 0, 10));
     vbox.getChildren().addAll(label, table, hBox, addButton, editButton, deleteButton, link);
 

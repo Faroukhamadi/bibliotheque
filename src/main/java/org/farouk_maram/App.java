@@ -60,12 +60,17 @@ public class App extends Application {
         Scene scene = homeLivre.getScene();
 
         stage.setTitle("Welcome");
+
+        scene.getStylesheets().add(getClass().getResource("/style.css").toExternalForm());
+
         stage.setScene(scene);
     }
 
     public void changeScencesToHistoriqueEmprunts() {
         HomeEmpruntHistory homeEmprunt = new HomeEmpruntHistory(stage);
         Scene scene = homeEmprunt.getScene();
+
+        scene.getStylesheets().add(getClass().getResource("/style.css").toExternalForm());
 
         stage.setTitle("Welcome");
         stage.setScene(scene);
@@ -75,6 +80,8 @@ public class App extends Application {
         HomeEmpruntEnCours homeEmprunt = new HomeEmpruntEnCours(stage);
         Scene scene = homeEmprunt.getScene();
 
+        scene.getStylesheets().add(getClass().getResource("/style.css").toExternalForm());
+
         stage.setTitle("Welcome");
         stage.setScene(scene);
     }
@@ -83,6 +90,8 @@ public class App extends Application {
         HomeEmprunt homeEmprunt = new HomeEmprunt(stage);
         Scene scene = homeEmprunt.getScene();
 
+        scene.getStylesheets().add(getClass().getResource("/style.css").toExternalForm());
+
         stage.setTitle("Welcome");
         stage.setScene(scene);
     }
@@ -90,6 +99,8 @@ public class App extends Application {
     public void changeScencesToHomeUsager() {
         HomeUsager homeUsager = new HomeUsager(stage);
         Scene scene = homeUsager.getScene();
+
+        scene.getStylesheets().add(getClass().getResource("/style.css").toExternalForm());
 
         stage.setTitle("Welcome");
         stage.setScene(scene);

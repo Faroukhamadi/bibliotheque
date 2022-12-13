@@ -242,8 +242,9 @@ public class HomeEmpruntHistory extends App implements HomeCRUD<Emprunt> {
 
     HBox hBox = new HBox(choiceBox, textField);
     hBox.setAlignment(Pos.CENTER);
+    hBox.setSpacing(10);
     final VBox vbox = new VBox();
-    vbox.setSpacing(5);
+    vbox.setSpacing(20);
     vbox.setPadding(new Insets(10, 0, 0, 10));
     vbox.getChildren().addAll(label, table, hBox, link);
 
