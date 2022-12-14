@@ -309,7 +309,8 @@ public class HomeUsager extends App implements HomeCRUD<Usager> {
       button.setOnAction(e1 -> {
         Usager usager = new Usager(table.getSelectionModel().getSelectedItem().getId(), textField1.getText(),
             textField2.getText(),
-            textField3.getText(), Statut.valueOf(statuts.getValue()));
+            textField3.getText(),
+            Statut.valueOf(statuts.getValue()));
 
         updateOne(usager);
 

@@ -102,6 +102,29 @@ public class Welcome extends App {
           "-fx-background-color: #1e293b; -fx-border-color: #475569; -fx-text-fill: #fbfbff; -fx-margin: 10; -fx-padding: 5; -fx-font-size: 20; -fx-min-width: 200; -fx-border-radius: 5; -fx-background-radius: 5;");
     });
 
+    Button logoutButton = new Button("Se déconnecter");
+    logoutButton.setOnAction(event -> {
+      Authenticate.logout();
+      changeScencesToLogin();
+    });
+
+    logoutButton.setStyle(
+        "-fx-background-color: #1e293b; -fx-border-color: #040f16; -fx-text-fill: #fbfbff; -fx-margin: 10; -fx-padding: 5; -fx-font-size: 20; -fx-min-width: 200; -fx-border-radius: 5; -fx-background-radius: 5;");
+
+    // add on hover effect to button and change background color to 040F16
+    logoutButton.setOnMouseEntered(event -> {
+      logoutButton.setStyle(
+          "-fx-background-color: #475569; -fx-border-color: #475569; -fx-text-fill: #fbfbff; -fx-margin: 10; -fx-padding: 5; -fx-font-size: 20; -fx-min-width: 200; -fx-border-radius: 5; -fx-background-radius: 5; -fx-cursor: hand;");
+    });
+
+    // remove effect when mouse is not on button
+    logoutButton.setOnMouseExited(event -> {
+      logoutButton.setStyle(
+          "-fx-background-color: #1e293b; -fx-border-color: #475569; -fx-text-fill: #fbfbff; -fx-margin: 10; -fx-padding: 5; -fx-font-size: 20; -fx-min-width: 200; -fx-border-radius: 5; -fx-background-radius: 5;");
+    });
+
+
+
     Text usernameText = new Text("Unknown user");
     if (Authenticate.isLoggedIn()) {
       usernameText.setText(Authenticate.getUsername());
