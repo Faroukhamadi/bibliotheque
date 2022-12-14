@@ -7,13 +7,10 @@ public class Authenticate {
 
   private Authenticate(String username) {
     Authenticate.username = username;
-
   }
 
   public static Authenticate login(String username) {
-    if (authenticateInstance == null) {
-      authenticateInstance = new Authenticate(username);
-    }
+    authenticateInstance = new Authenticate(username);
     return authenticateInstance;
   }
 

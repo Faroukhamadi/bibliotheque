@@ -23,20 +23,15 @@ public class Welcome extends App {
       changeScencesToHomeLivre();
     });
 
-    // change button background color to 040F16 and add border of color 040f16 and
-    // make text fbfbff and add padding and margin and make font bigger and increase
     livresButton.setStyle(
         "-fx-background-color: #1e293b; -fx-border-color: #040f16; -fx-text-fill: #fbfbff; -fx-margin: 10; -fx-padding: 5; -fx-font-size: 20; -fx-min-width: 200; -fx-border-radius: 5; -fx-background-radius: 5;");
 
-    // add on hover effect to button and change background color to 040F16
     livresButton.setOnMouseEntered(event -> {
-      // add cursor pointer
       livresButton.setStyle(
           "-fx-background-color: #475569; -fx-border-color: #475569; -fx-text-fill: #fbfbff; -fx-margin: 10; -fx-padding: 5; -fx-font-size: 20; -fx-min-width: 200; -fx-border-radius: 5; -fx-background-radius: 5; -fx-cursor: hand;");
 
     });
 
-    // remove effect when mouse is not on button
     livresButton.setOnMouseExited(event -> {
       livresButton.setStyle(
           "-fx-background-color: #1e293b; -fx-border-color: #475569; -fx-text-fill: #fbfbff; -fx-margin: 10; -fx-padding: 5; -fx-font-size: 20; -fx-min-width: 200; -fx-border-radius: 5; -fx-background-radius: 5;");
@@ -50,13 +45,11 @@ public class Welcome extends App {
     usagersButton.setStyle(
         "-fx-background-color: #1e293b; -fx-border-color: #040f16; -fx-text-fill: #fbfbff; -fx-margin: 10; -fx-padding: 5; -fx-font-size: 20; -fx-min-width: 200; -fx-border-radius: 5; -fx-background-radius: 5;");
 
-    // add on hover effect to button and change background color to 040F16
     usagersButton.setOnMouseEntered(event -> {
       usagersButton.setStyle(
           "-fx-background-color: #475569; -fx-border-color: #475569; -fx-text-fill: #fbfbff; -fx-margin: 10; -fx-padding: 5; -fx-font-size: 20; -fx-min-width: 200; -fx-border-radius: 5; -fx-background-radius: 5; -fx-cursor: hand;");
     });
 
-    // remove effect when mouse is not on button
     usagersButton.setOnMouseExited(event -> {
       usagersButton.setStyle(
           "-fx-background-color: #1e293b; -fx-border-color: #475569; -fx-text-fill: #fbfbff; -fx-margin: 10; -fx-padding: 5; -fx-font-size: 20; -fx-min-width: 200; -fx-border-radius: 5; -fx-background-radius: 5;");
@@ -70,13 +63,11 @@ public class Welcome extends App {
     empruntsEnCoursButton.setStyle(
         "-fx-background-color: #1e293b; -fx-border-color: #040f16; -fx-text-fill: #fbfbff; -fx-margin: 10; -fx-padding: 5; -fx-font-size: 20; -fx-min-width: 200; -fx-border-radius: 5; -fx-background-radius: 5;");
 
-    // add on hover effect to button and change background color to 040F16
     empruntsEnCoursButton.setOnMouseEntered(event -> {
       empruntsEnCoursButton.setStyle(
           "-fx-background-color: #475569; -fx-border-color: #475569; -fx-text-fill: #fbfbff; -fx-margin: 10; -fx-padding: 5; -fx-font-size: 20; -fx-min-width: 200; -fx-border-radius: 5; -fx-background-radius: 5; -fx-cursor: hand;");
     });
 
-    // remove effect when mouse is not on button
     empruntsEnCoursButton.setOnMouseExited(event -> {
       empruntsEnCoursButton.setStyle(
           "-fx-background-color: #1e293b; -fx-border-color: #475569; -fx-text-fill: #fbfbff; -fx-margin: 10; -fx-padding: 5; -fx-font-size: 20; -fx-min-width: 200; -fx-border-radius: 5; -fx-background-radius: 5;");
@@ -90,7 +81,6 @@ public class Welcome extends App {
     HistoriqueEmpruntsButton.setStyle(
         "-fx-background-color: #1e293b; -fx-border-color: #040f16; -fx-text-fill: #fbfbff; -fx-margin: 10; -fx-padding: 5; -fx-font-size: 20; -fx-min-width: 200; -fx-border-radius: 5; -fx-background-radius: 5;");
 
-    // add on hover effect to button and change background color to 040F16
     HistoriqueEmpruntsButton.setOnMouseEntered(event -> {
       HistoriqueEmpruntsButton.setStyle(
           "-fx-background-color: #475569; -fx-border-color: #475569; -fx-text-fill: #fbfbff; -fx-margin: 10; -fx-padding: 5; -fx-font-size: 20; -fx-min-width: 200; -fx-border-radius: 5; -fx-background-radius: 5; -fx-cursor: hand;");
@@ -111,24 +101,21 @@ public class Welcome extends App {
     logoutButton.setStyle(
         "-fx-background-color: #1e293b; -fx-border-color: #040f16; -fx-text-fill: #fbfbff; -fx-margin: 10; -fx-padding: 5; -fx-font-size: 20; -fx-min-width: 200; -fx-border-radius: 5; -fx-background-radius: 5;");
 
-    // add on hover effect to button and change background color to 040F16
     logoutButton.setOnMouseEntered(event -> {
       logoutButton.setStyle(
           "-fx-background-color: #475569; -fx-border-color: #475569; -fx-text-fill: #fbfbff; -fx-margin: 10; -fx-padding: 5; -fx-font-size: 20; -fx-min-width: 200; -fx-border-radius: 5; -fx-background-radius: 5; -fx-cursor: hand;");
     });
 
-    // remove effect when mouse is not on button
     logoutButton.setOnMouseExited(event -> {
       logoutButton.setStyle(
           "-fx-background-color: #1e293b; -fx-border-color: #475569; -fx-text-fill: #fbfbff; -fx-margin: 10; -fx-padding: 5; -fx-font-size: 20; -fx-min-width: 200; -fx-border-radius: 5; -fx-background-radius: 5;");
     });
 
-
-
     Text usernameText = new Text("Unknown user");
     if (Authenticate.isLoggedIn()) {
       usernameText.setText(Authenticate.getUsername());
     }
+
     usernameText.setStyle("-fx-fill: #040f16; -fx-font-weight: bold;");
     usernameText.setFont(new javafx.scene.text.Font(30));
     Text title = new Text("Bienvenue dans le système de gestion de bibliothèque!");
@@ -145,7 +132,8 @@ public class Welcome extends App {
     textContainer.setPadding(new Insets(10, 10, 10, 10));
     textContainer.setSpacing(10);
 
-    VBox buttonsContainer = new VBox(livresButton, usagersButton, HistoriqueEmpruntsButton, empruntsEnCoursButton);
+    VBox buttonsContainer = new VBox(livresButton, usagersButton, HistoriqueEmpruntsButton, empruntsEnCoursButton,
+        logoutButton);
     buttonsContainer.setStyle("-fx-alignment: center; -fx-background-color: #fbfbff;");
     buttonsContainer.setPadding(new Insets(10, 10, 10, 10));
     buttonsContainer.setSpacing(20);
