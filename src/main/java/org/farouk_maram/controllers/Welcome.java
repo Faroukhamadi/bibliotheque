@@ -4,10 +4,12 @@ import org.farouk_maram.App;
 import org.farouk_maram.Authentication.Authenticate;
 
 import javafx.geometry.Insets;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 
 public class Welcome extends App {
@@ -144,7 +146,9 @@ public class Welcome extends App {
     root.setPadding(new Insets(10, 10, 10, 10));
     root.setSpacing(10);
 
-    Scene scene = new Scene(root);
+    Rectangle2D screenSize = Screen.getPrimary().getVisualBounds();
+    Scene scene = new Scene(root, screenSize.getWidth(), screenSize.getHeight());
+
     return scene;
 
   }

@@ -20,6 +20,7 @@ import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
@@ -37,6 +38,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Modality;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 
 // change select query to sort by date
@@ -148,7 +150,9 @@ public class HomeEmpruntEnCours extends App implements HomeCRUD<Emprunt> {
 
     StackPane stackPane = new StackPane();
 
-    Scene scene = new Scene(stackPane, 640, 480);
+    Rectangle2D screenSize = Screen.getPrimary().getVisualBounds();
+
+    Scene scene = new Scene(stackPane, screenSize.getWidth(), screenSize.getHeight());
 
     stage.setTitle("Emprunts en cours");
     stage.setMinHeight(800);
@@ -417,7 +421,7 @@ public class HomeEmpruntEnCours extends App implements HomeCRUD<Emprunt> {
     hBox.setAlignment(Pos.CENTER);
     hBox.setSpacing(10);
     final VBox vbox = new VBox();
-    vbox.setSpacing(20);
+    vbox.setSpacing(5);
     vbox.setPadding(new Insets(10, 0, 0, 10));
     vbox.getChildren().addAll(label, table, hBox, addButton, rendreButton, link);
 

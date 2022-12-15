@@ -18,6 +18,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
@@ -30,6 +31,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import net.synedra.validatorfx.ValidationResult;
@@ -40,16 +42,21 @@ public class Login extends App {
 
   public Login(Stage stage) {
     this.stage = stage;
+    stage.setMaximized(true);
   }
 
   public Scene getScene() {
     StackPane stackPane = new StackPane();
 
-    Scene scene = new Scene(stackPane, 640, 480);
+    Rectangle2D screenSize = Screen.getPrimary().getVisualBounds();
+
+    Scene scene = new Scene(stackPane, screenSize.getWidth(), screenSize.getHeight());
 
     GridPane grid = new GridPane();
 
     stage.setTitle("Login");
+    stage.setMaximized(true);
+
     grid.setAlignment(javafx.geometry.Pos.CENTER);
     grid.setHgap(10);
     grid.setVgap(10);

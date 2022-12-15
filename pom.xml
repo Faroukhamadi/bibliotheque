@@ -93,8 +93,8 @@
 				</dependencies>
 				
 				<configuration>
-					<user>${FLYWAY_USERNAME}</user>
-					<password>${FLYWAY_PASSWORD}</password>
+					<user>${faroukhamadi}</user>
+					<password>${16/04/2002}</password>
                     <!-- only use amp with windows -->
 					<url>jdbc:mysql://127.0.0.1:3306/bibliotheque?useSsl=false&amp;useJDBCCompliantTimezoneShift=true&amp;useLegacyDatetimeCode=false&amp;serverTimezone=UTC</url>
 					<skip>false</skip>

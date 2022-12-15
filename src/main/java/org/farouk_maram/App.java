@@ -26,6 +26,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
@@ -38,6 +39,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import net.synedra.validatorfx.ValidationResult;
@@ -49,6 +51,7 @@ public class App extends Application {
 
     public void changeScencesToWelcome() {
         Welcome welcome = new Welcome(stage);
+
         Scene scene = welcome.getScene();
 
         stage.setTitle("Welcome");
@@ -73,6 +76,7 @@ public class App extends Application {
         scene.getStylesheets().add(getClass().getResource("/style.css").toExternalForm());
 
         stage.setTitle("Welcome");
+
         stage.setScene(scene);
     }
 
@@ -146,6 +150,7 @@ public class App extends Application {
         this.stage = stage;
 
         stage.setTitle("Inscription");
+        stage.setMaximized(true);
         GridPane grid = new GridPane();
         grid.setAlignment(javafx.geometry.Pos.CENTER);
         grid.setHgap(10);
@@ -402,10 +407,6 @@ public class App extends Application {
         Scene scene = new Scene(grid, 640, 480);
         stage.setScene(scene);
         stage.show();
-    }
-
-    public String sayHello() {
-        return "";
     }
 
     public static void main(String[] args) {

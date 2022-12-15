@@ -17,6 +17,7 @@ import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
@@ -32,6 +33,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Modality;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 
 public class HomeUsager extends App implements HomeCRUD<Usager> {
@@ -159,7 +161,9 @@ public class HomeUsager extends App implements HomeCRUD<Usager> {
 
     StackPane stackPane = new StackPane();
 
-    Scene scene = new Scene(stackPane, 640, 480);
+    Rectangle2D screenSize = Screen.getPrimary().getVisualBounds();
+
+    Scene scene = new Scene(stackPane, screenSize.getWidth(), screenSize.getHeight());
 
     stage.setTitle("All usager");
     stage.setMinHeight(800);
@@ -390,7 +394,7 @@ public class HomeUsager extends App implements HomeCRUD<Usager> {
     hBox.setAlignment(Pos.CENTER);
     hBox.setSpacing(10);
     final VBox vbox = new VBox();
-    vbox.setSpacing(10);
+    vbox.setSpacing(5);
     vbox.setPadding(new Insets(10, 0, 0, 10));
     vbox.getChildren().addAll(label, table, hBox, addButton, editButton, deleteButton, link);
 
